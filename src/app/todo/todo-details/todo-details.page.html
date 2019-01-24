@@ -16,5 +16,6 @@
       <ion-input required type="number" placeholder="Priority" [(ngModel)]="todo.priority"></ion-input>
     </ion-item>
   </ion-list>
-  <ion-button expand="full" (click)="saveTodo()">Save</ion-button>
+  <ion-button expand="block" (click)="saveTodo()">Save</ion-button>
+  <ion-button expand="block" (click)="deleteTodo()" color="danger" [disabled]="!todoId">Delete</ion-button>
 </ion-content>
