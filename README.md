@@ -22,4 +22,6 @@
         * change the bundle identifier so that xcode can properly create provisioning file and certificate
         * go to File -> Project Settings, select Legacy Build System under Build System options
         ![screeshot](src/assets/img/screenshot1.png)
+    
+    1. add firebase config to environments/environment.prod.ts
     1. run!
