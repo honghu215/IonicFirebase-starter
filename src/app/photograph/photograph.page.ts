@@ -14,7 +14,7 @@ export class PhotographPage implements OnInit {
   imageRecords: Image[];
   errorMsg = '';
   captureDataUrl: string;
-
+  imageUrls: string[];
 
   constructor() { }
 
@@ -29,21 +29,39 @@ export class PhotographPage implements OnInit {
       destinationType: Camera.DestinationType.DATA_URL,
       encodingType: Camera.EncodingType.JPEG,
       mediaType: Camera.MediaType.PICTURE,
+      // sourceType: Camera.PictureSourceType.SAVEDPHOTOALBUM,
+      saveToPhotoAlbum: true
     };
-    Camera.getPicture(cameraOptions).then( imagePath => {
-      this.captureDataUrl = imagePath;
-      this.gotUrl.next(true);
-    }, error => {
-      console.log(error);
-      this.errorMsg = error;
-    });
-    // this.camera.getPicture((data) => {
-    //   this.captureDataUrl = data;
+
+
+    // Camera.getPicture(cameraOptions).then( imagePath => {
+    //   this.captureDataUrl = imagePath;
+    //   this.gotUrl.next(true);
+    //   this.imageUrls.push(imagePath);
     // }, error => {
     //   console.log(error);
     //   this.errorMsg = error;
-    // }, cameraOptions);
+    // });
+    Camera.getPicture(cameraOptions).then( (imagePath) => {
+      console.log(imagePath);
+      // this.captureDataUrl = 'data:image/jpeg;base64,' + imagePath;
+      this.captureDataUrl = 'data:image/jpeg;base64,' + imagePath;
+      console.log(this.captureDataUrl);
+      this.imageUrls.push(this.captureDataUrl);
+      this.gotUrl.next(true);
+    }, error => {
+      this.errorMsg = error;
+    });
   }
+
+  // upload() {
+  //   let storageRef = firebase.storage().ref();
+  //   // Create a timestamp as filename
+  //   const filename = Math.floor(Date.now() / 1000);
+
+  //   // Create a reference to 'images/todays-date.jpg'
+  //   const imageRef = storageRef.child(`images/${filename}.jpg`);
+  // }
 
 
 

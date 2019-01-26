@@ -12,9 +12,15 @@
   <div style="display:flex; flex-direction: column; justify-content: center">
     <ion-icon name="camera"></ion-icon>
     <ion-button expand="full" (click)="capture()">Let's take a picture!</ion-button>
-    <ion-img [src]="captureDataUrl" *ngIf="!captureDataUrl"></ion-img>
+    <!-- <ion-img [src]="captureDataUrl"></ion-img> -->
+    <!-- <img [src]="captureDataUrl"  *ngIf="captureDataUrl"/> -->
   </div>
 
+  <ion-list>
+    <ion-item *ngFor="let imgUrl of imageUrls">
+      <ion-img [src]="imgUrl"></ion-img>
+    </ion-item>
+  </ion-list>
   <div>
     <p>{{ errorMsg }}</p>
   </div>

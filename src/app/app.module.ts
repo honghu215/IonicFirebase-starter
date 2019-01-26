@@ -1,3 +1,5 @@
+import { PhotographPageModule } from './photograph/photograph.module';
+import { Camera } from '@ionic-native/camera';
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { RouteReuseStrategy } from '@angular/router';
@@ -21,7 +23,8 @@ import { AngularFirestoreModule } from 'angularfire2/firestore';
     IonicModule.forRoot(),
     AppRoutingModule,
     AngularFireModule.initializeApp(environment.firebase),
-    AngularFirestoreModule
+    AngularFirestoreModule,
+    PhotographPageModule
   ],
   providers: [
     StatusBar,
