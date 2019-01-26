@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { Camera, CameraOptions } from '@ionic-native/camera';
 import { Image, ImageService } from './../services/image.service';
 import { Subject } from 'rxjs';
+import * as firebase from 'firebase';
 
 
 @Component({
@@ -54,14 +55,14 @@ export class PhotographPage implements OnInit {
     });
   }
 
-  // upload() {
-  //   let storageRef = firebase.storage().ref();
-  //   // Create a timestamp as filename
-  //   const filename = Math.floor(Date.now() / 1000);
+  upload() {
+    let storageRef = firebase.storage().ref();
+    // Create a timestamp as filename
+    const filename = Math.floor(Date.now() / 1000);
 
-  //   // Create a reference to 'images/todays-date.jpg'
-  //   const imageRef = storageRef.child(`images/${filename}.jpg`);
-  // }
+    // Create a reference to 'images/todays-date.jpg'
+    const imageRef = storageRef.child(`images/${filename}.jpg`);
+  }
 
 
 
