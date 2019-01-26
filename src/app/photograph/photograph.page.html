@@ -1,0 +1,21 @@
+<ion-header>
+    <ion-toolbar color="primary">
+      <ion-buttons slot="start">
+        <ion-menu-button></ion-menu-button>
+      </ion-buttons>
+      <ion-title>Take A Picture</ion-title>
+    </ion-toolbar>
+  </ion-header>
+
+<ion-content padding>
+
+  <div style="display:flex; flex-direction: column; justify-content: center">
+    <ion-icon name="camera"></ion-icon>
+    <ion-button expand="full" (click)="capture()">Let's take a picture!</ion-button>
+    <ion-img [src]="captureDataUrl" *ngIf="!captureDataUrl"></ion-img>
+  </div>
+
+  <div>
+    <p>{{ errorMsg }}</p>
+  </div>
+</ion-content>

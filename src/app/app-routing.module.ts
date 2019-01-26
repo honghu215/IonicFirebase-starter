@@ -17,7 +17,8 @@ const routes: Routes = [
   },
   { path: 'todos', loadChildren: './todo/todo.module#TodoPageModule' },
   { path: 'todo-details/:id', loadChildren: './todo/todo-details/todo-details.module#TodoDetailsPageModule' },
-  { path: 'todo-details', loadChildren: './todo/todo-details/todo-details.module#TodoDetailsPageModule' }
+  { path: 'todo-details', loadChildren: './todo/todo-details/todo-details.module#TodoDetailsPageModule' },
+  { path: 'photograph', loadChildren: './photograph/photograph.module#PhotographPageModule' }
 ];
 
 @NgModule({

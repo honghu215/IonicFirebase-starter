@@ -25,6 +25,11 @@ export class AppComponent {
       url: '/todos',
       icon: 'book'
     },
+    {
+      title: 'Photograph',
+      url: '/photograph',
+      icon: 'camera'
+    }
   ];
 
   constructor(
