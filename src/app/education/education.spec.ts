@@ -1,35 +1,33 @@
-import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
-import { ComponentFixture, TestBed, async } from '@angular/core/testing';
 
-import { EducationPage } from './education.page';
+import { Component, OnInit } from '@angular/core';
 
-describe('EducationPage', () => {
-    let component: EducationPage;
-    let fixture: ComponentFixture<EducationPage>;
-    let educationPage: HTMLElement;
+@Component({
+    selector: 'app-education-details',
+    templateUrl: './education-details.page.html',
+    styleUrls: ['./education-details.page.scss'],
+})
+export class EducationDetailsPage implements OnInit {
 
-    beforeEach(async(() => {
-        TestBed.configureTestingModule({
-            declarations: [EducationPage],
-            schemas: [CUSTOM_ELEMENTS_SCHEMA],
-        })
-            .compileComponents();
-    }));
 
-    beforeEach(async () => {
-        fixture = await TestBed.createComponent(EducationPage);
-        component = fixture.componentInstance;
-        fixture.detectChanges();
-    });
+    constructor() { }
 
-    it('should create', () => {
-        expect(component).toBeTruthy();
-    });
+    ngOnInit() {
+    }
 
-    it('should have a list of 10 elements', () => {
-        educationPage = fixture.nativeElement;
-        const items = educationPage.querySelectorAll('ion-item');
-        expect(items.length).toEqual(10);
-    });
 
-});
+    // async deleteTodo() {
+    //     if (this.todoId) {
+    //         const loading = await this.loadingController.create({
+    //             message: 'Deleting Todo...'
+    //         });
+    //         await loading.present();
+
+    //         this.todoService.removeTodo(this.todoId).then(() => {
+    //             loading.dismiss();
+    //             this.nav.goBack();
+    //         });
+    //     }
+    // }
+
+
+}

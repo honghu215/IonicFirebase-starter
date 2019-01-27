@@ -21,16 +21,6 @@ export class AppComponent {
       icon: 'contacts'
     },
     {
-      title: 'List',
-      url: '/list',
-      icon: 'list'
-    },
-    {
-      title: 'Todo',
-      url: '/todos',
-      icon: 'book'
-    },
-    {
       title: 'Education',
       url: '/education',
       icon: 'school'

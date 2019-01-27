@@ -14,10 +14,6 @@ const routes: Routes = [
   {  path: 'user',
     loadChildren: './user/user.module#UserPageModule'
   },
-  {
-    path: 'list',
-    loadChildren: './list/list.module#ListPageModule'
-  },
   {  path: 'education',
     loadChildren: './education/education.module#EducationPageModule'
   },
@@ -33,9 +29,9 @@ const routes: Routes = [
     path: 'advisor',
     loadChildren: './advisor/advisor.module#AdvisorPageModule'
   },
-  { path: 'todos', loadChildren: './todo/todo.module#TodoPageModule' },
-  { path: 'todo-details/:id', loadChildren: './todo/todo-details/todo-details.module#TodoDetailsPageModule' },
-  { path: 'todo-details', loadChildren: './todo/todo-details/todo-details.module#TodoDetailsPageModule' },
+  { path: 'education', loadChildren: './education/education.module#EducationPageModule' },
+  { path: 'education-details/:id', loadChildren: './education/education-details/education-details.module#EducationDetailsPageModule' },
+  { path: 'education-details', loadChildren: './education/education-details/education-details.module#EducationDetailsPageModule' },
 ];
 
 @NgModule({
