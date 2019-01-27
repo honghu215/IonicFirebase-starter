@@ -5,18 +5,22 @@ import { IonicModule } from '@ionic/angular';
 import { RouterModule } from '@angular/router';
 
 import { EducationPage } from './education.page';
+import { EducationRoutingModule } from './education-routing.module';
+import { OnePageModule } from './one/one.module';
+
 
 @NgModule({
     imports: [
         CommonModule,
         FormsModule,
         IonicModule,
-        RouterModule.forChild([
-            {
-                path: '',
-                component: EducationPage
-            }
-        ])
+        EducationRoutingModule
+        // RouterModule.forChild([
+        //     {
+        //         path: '',
+        //         component: EducationPage
+        //     }
+        // ])
     ],
     declarations: [EducationPage]
 })

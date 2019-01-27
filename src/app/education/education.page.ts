@@ -1,13 +1,19 @@
-import { Component} from '@angular/core';
+import { Component, OnInit} from '@angular/core';
+import { Router } from '@angular/router';
 
 @Component({
     selector: 'app-education',
     templateUrl: 'education.page.html',
     styleUrls: ['education.page.scss']
 })
-export class EducationPage {
-    navCtrl: any;
-toOne() {
-    this.navCtrl.push('One');
-}
+export class EducationPage implements OnInit {
+    constructor(private router: Router) {}
+
+    ngOnInit() {
+
+    }
+
+    go() {
+        this.router.navigate(['/education/one']);
+    }
 }
