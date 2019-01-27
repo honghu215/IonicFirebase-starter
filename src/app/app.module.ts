@@ -1,3 +1,6 @@
+import { IonicStorageModule } from '@ionic/storage';
+import { AngularFireAuth, AngularFireAuthModule } from 'angularfire2/auth';
+import { SignupPageModule } from './signup/signup.module';
 import { File } from '@ionic-native/file/ngx';
 import { PhotographPageModule } from './photograph/photograph.module';
 import { Camera } from '@ionic-native/camera/ngx';
@@ -17,6 +20,7 @@ import { environment } from '../environments/environment';
 import { AngularFirestoreModule } from 'angularfire2/firestore';
 
 import * as firebase from 'firebase';
+import { LoginPageModule } from './login/login.module';
 
 firebase.initializeApp(environment.firebase);
 
@@ -26,10 +30,15 @@ firebase.initializeApp(environment.firebase);
   imports: [
     BrowserModule,
     IonicModule.forRoot(),
+    IonicStorageModule.forRoot(),
     AppRoutingModule,
     AngularFireModule.initializeApp(environment.firebase),
     AngularFirestoreModule,
-    PhotographPageModule
+    PhotographPageModule,
+    AngularFireModule,
+    LoginPageModule,
+    SignupPageModule,
+    AngularFireAuthModule
   ],
   providers: [
     StatusBar,
@@ -40,4 +49,4 @@ firebase.initializeApp(environment.firebase);
   ],
   bootstrap: [AppComponent]
 })
-export class AppModule {}
+export class AppModule { }

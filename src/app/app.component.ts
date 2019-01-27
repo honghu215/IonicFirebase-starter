@@ -1,4 +1,5 @@
-import { Component } from '@angular/core';
+import { AuthService } from './services/auth.service';
+import { Component, OnInit } from '@angular/core';
 
 import { Platform } from '@ionic/angular';
 import { SplashScreen } from '@ionic-native/splash-screen/ngx';
@@ -8,7 +9,7 @@ import { StatusBar } from '@ionic-native/status-bar/ngx';
   selector: 'app-root',
   templateUrl: 'app.component.html'
 })
-export class AppComponent {
+export class AppComponent implements OnInit {
   public appPages = [
     {
       title: 'Home',
@@ -32,14 +33,25 @@ export class AppComponent {
     }
   ];
 
+  isLoggedin = false;
   constructor(
     private platform: Platform,
     private splashScreen: SplashScreen,
-    private statusBar: StatusBar
+    private statusBar: StatusBar,
+    private authService: AuthService
   ) {
     this.initializeApp();
   }
 
+  ngOnInit() {
+    this.authService.authChange.subscribe( authStatus => {
+      this.isLoggedin = authStatus;
+    });
+  }
+
+  onLogout() {
+    this.authService.logout();
+  }
   initializeApp() {
     this.platform.ready().then(() => {
       this.statusBar.styleDefault();

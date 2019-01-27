@@ -1,0 +1,43 @@
+<ion-header>
+  <ion-toolbar color="primary">
+    <ion-buttons slot="start">
+      <ion-back-button></ion-back-button>
+    </ion-buttons>
+    <ion-title>Sign Up</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content padding>
+
+  <form #f="ngForm" novalidate>
+    <ion-list lines="none">
+      <ion-item>
+        <ion-label position="stacked" color="primary">Email</ion-label>
+        <ion-input [(ngModel)]="authData.email" name="email" type="text" #email="ngModel" required>
+        </ion-input>
+      </ion-item>
+      <!-- <ion-text color="danger">
+        <p [hidden]="email.valid || submitted == false" padding-left>
+          Email is required
+        </p>
+      </ion-text> -->
+
+      <ion-item>
+        <ion-label position="stacked" color="primary">Password</ion-label>
+        <ion-input [(ngModel)]="authData.password" name="password" type="password" #password="ngModel" required>
+        </ion-input>
+      </ion-item>
+      <!-- <ion-text color="danger">
+        <p [hidden]="password.valid || submitted == false" padding-left>
+          Password is required
+        </p>
+      </ion-text> -->
+    </ion-list>
+
+    <div padding>
+      <ion-button (click)="onSubmit(f)" type="submit" expand="block">Sign Up</ion-button>
+    </div>
+  </form>
+
+
+</ion-content>
