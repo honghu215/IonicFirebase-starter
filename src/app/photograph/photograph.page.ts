@@ -1,12 +1,14 @@
+import { AuthService } from './../services/auth.service';
+import { Storage } from '@ionic/storage';
 import { Component, OnInit } from '@angular/core';
 import { Camera, CameraOptions } from '@ionic-native/camera/ngx';
 import { Subject } from 'rxjs';
 import * as firebase from 'firebase';
-import { AlertController } from '@ionic/angular';
+import { AlertController, LoadingController } from '@ionic/angular';
 import { File } from '@ionic-native/file/ngx';
 
 
-
+const USERID_KEY = 'UserId';
 @Component({
   selector: 'app-photograph',
   templateUrl: './photograph.page.html',
@@ -18,10 +20,14 @@ export class PhotographPage implements OnInit {
   captureDataUrl = '';
   imageUrls = [];
   storageRef: any;
+  downloadUrl = '';
 
   constructor(private alertCtl: AlertController,
     private file: File,
-    private camera: Camera) { }
+    private camera: Camera,
+    private loadingController: LoadingController,
+    private storage: Storage,
+    private auth: AuthService) { }
 
   ngOnInit() {
     this.gotUrl.next(false);
@@ -37,21 +43,35 @@ export class PhotographPage implements OnInit {
       saveToPhotoAlbum: true
     };
 
+    // const imgInfo = await this.camera.getPicture(cameraOptions);
+    // this.camera.getPicture(cameraOptions).then( imgPath => {
+
+    //   this.imageUrls.push('data:image/jpeg;base64,' + imgPath);
+    //   const blobInfo = this.makeFileIntoBlob(imgPath);
+    // }, error => {
+    //   console.log(error);
+    // });
+    // const storageRef = firebase.storage().ref();
+    // const uploadTask = storageRef.child(`${this.storage.get(USERID_KEY)}/${Math.floor(Date.now() / 1000)}`).put(imgInfo);
     try {
       const imgInfo = await this.camera.getPicture(cameraOptions);
-      console.log(`***********Image Info*************\n ${imgInfo}`);
+
+      this.imageUrls.push(imgInfo);
       const blobInfo = await this.makeFileIntoBlob(imgInfo);
-      console.log(`***********Blod Info*************\n ${blobInfo}`);
+
       const uploadInfo: any = await this.upload(blobInfo);
-      console.log(`***********Upload Info*************\n ${uploadInfo}`);
-      alert('File Upload Success ' + uploadInfo);
+
+      alert('File Upload Success ' + uploadInfo.fileName);
     } catch (e) {
       console.log(e.message);
       alert('File Upload Error ' + e.message);
     }
   }
 
-  makeFileIntoBlob(imgPath) {
+
+
+
+  async makeFileIntoBlob(imgPath) {
     return new Promise((resolve, reject) => {
       let fileName = '';
       this.file
@@ -84,32 +104,29 @@ export class PhotographPage implements OnInit {
         .catch(e => reject(e));
     });
   }
-  upload(imgBlobInfo) {
-    console.log('uploadToFirebase');
+  async upload(imgBlobInfo) {
+    const loading = await this.loadingController.create({
+      message: 'Uploading to firebase...'
+    });
+    await loading.present();
+
     return new Promise((resolve, reject) => {
       const fileRef = firebase.storage().ref('images/' + imgBlobInfo.fileName);
-
       const uploadTask = fileRef.put(imgBlobInfo.imgBlob);
 
-      uploadTask.on(
-        'state_changed',
+      uploadTask.on('state_changed',
         (_snapshot: any) => {
-          console.log(
-            'snapshot progess ' +
-            (_snapshot.bytesTransferred / _snapshot.totalBytes) * 100
-          );
+          console.log('snapshot progess ' + (_snapshot.bytesTransferred / _snapshot.totalBytes) * 100);
         },
         _error => {
           console.log(_error);
           reject(_error);
         },
         () => {
-          // compconstion...
-          resolve(uploadTask.snapshot);
-          const data = uploadTask.snapshot.ref.toString();
-          console.log(`***************Download Url****************** \n ${data}`);
-          // console.log(`${data.downloadURLs[0]}, ${data.downloadURLs.length}, ${data.name}, ${data.size}`);
-          // this.imageUrls.push(url);
+          loading.dismiss();
+          uploadTask.snapshot.ref.getDownloadURL().then(function (downloadURL) {
+            console.log('File available at', downloadURL);
+          });
         }
       );
     });

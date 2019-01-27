@@ -1,10 +1,11 @@
 import { Injectable } from '@angular/core';
 import { AngularFireAuth } from 'angularfire2/auth';
 import * as firebase from 'firebase/app';
-import { Subject } from 'rxjs';
+import { Subject, Observable } from 'rxjs';
 import { Router } from '@angular/router';
 import { AuthData } from './auth-data.model';
 import { IonicStorageModule, Storage } from '@ionic/storage';
+import { AngularFireDatabase } from 'angularfire2/database';
 
 const USERID_KEY = 'UserId';
 @Injectable({
@@ -13,10 +14,11 @@ const USERID_KEY = 'UserId';
 export class AuthService {
   authChange = new Subject<boolean>();
   private isAuthenticated = false;
-
+  buckets: Observable<any[]>;
   constructor(private afAuth: AngularFireAuth,
               private router: Router,
-              private storage: Storage) { }
+              private storage: Storage,
+              private db: AngularFireDatabase) { }
 
   registerUser(authData: AuthData) {
     this.afAuth.auth
@@ -60,5 +62,10 @@ export class AuthService {
     this.router.navigate(['/home']);
   }
 
+  getBucketList() {
+    // this.buckets = this.db.list('' + this.storage.get(USERID_KEY)).valueChanges();
+    const buckets = this.db.list('images');
+    console.log(buckets);
+  }
 
 }

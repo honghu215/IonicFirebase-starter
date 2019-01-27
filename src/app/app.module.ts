@@ -1,3 +1,4 @@
+import { RecordPageModule } from './record/record.module';
 import { IonicStorageModule } from '@ionic/storage';
 import { AngularFireAuth, AngularFireAuthModule } from 'angularfire2/auth';
 import { SignupPageModule } from './signup/signup.module';
@@ -21,6 +22,7 @@ import { AngularFirestoreModule } from 'angularfire2/firestore';
 
 import * as firebase from 'firebase';
 import { LoginPageModule } from './login/login.module';
+import { AngularFireDatabaseModule } from 'angularfire2/database';
 
 firebase.initializeApp(environment.firebase);
 
@@ -38,7 +40,9 @@ firebase.initializeApp(environment.firebase);
     AngularFireModule,
     LoginPageModule,
     SignupPageModule,
-    AngularFireAuthModule
+    AngularFireAuthModule,
+    RecordPageModule,
+    AngularFireDatabaseModule
   ],
   providers: [
     StatusBar,

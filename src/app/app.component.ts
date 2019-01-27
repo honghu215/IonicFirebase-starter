@@ -30,6 +30,11 @@ export class AppComponent implements OnInit {
       title: 'Photograph',
       url: '/photograph',
       icon: 'camera'
+    },
+    {
+      title: 'Record',
+      url: '/record',
+      icon: 'url'
     }
   ];
 
