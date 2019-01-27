@@ -27,14 +27,14 @@ export class AppComponent implements OnInit {
     //   icon: 'book'
     // },
     {
-      title: 'Photograph',
+      title: 'Take A Picture',
       url: '/photograph',
       icon: 'camera'
     },
     {
       title: 'Record',
       url: '/record',
-      icon: 'url'
+      icon: 'list'
     },
     {
       title: 'Education',
