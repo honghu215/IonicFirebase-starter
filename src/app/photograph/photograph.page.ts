@@ -24,6 +24,7 @@ export class PhotographPage implements OnInit {
   imageUrls = [];
   storageRef: any;
   downloadUrl = '';
+  isLoggedin = false;
 
   imageCollection: AngularFirestoreCollection<string>;
   images: Observable<string[]>;
@@ -36,6 +37,9 @@ export class PhotographPage implements OnInit {
 
   ngOnInit() {
     this.gotUrl.next(false);
+    this.auth.authChange.subscribe( logStatus => {
+      this.isLoggedin = logStatus;
+    });
   }
 
   async capture() {

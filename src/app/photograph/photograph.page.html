@@ -11,7 +11,7 @@
 
   <div style="display:flex; flex-direction: column; justify-content: center">
     <!-- <ion-icon name="camera"></ion-icon> -->
-    <ion-button expand="full" (click)="capture()">Let's take a picture!</ion-button>
+    <ion-button expand="full" (click)="capture()" [disabled]="!isLoggedin">Let's take a picture!</ion-button>
     <!-- <img [src]="captureDataUrl"  *ngIf="captureDataUrl"/> -->
   </div>
 
