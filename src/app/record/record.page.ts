@@ -1,6 +1,7 @@
 import { AuthService } from './../services/auth.service';
 import { Component, OnInit } from '@angular/core';
 import * as firebase from 'firebase';
+import { map } from 'rxjs/operators';
 
 @Component({
   selector: 'app-record',
@@ -8,23 +9,26 @@ import * as firebase from 'firebase';
   styleUrls: ['./record.page.scss'],
 })
 export class RecordPage implements OnInit {
-  urls = [];
-  constructor(private auth: AuthService) { }
-
-  ngOnInit() {
+  // tslint:disable-next-line:max-line-length
+  urls: string;
+  constructor(private auth: AuthService) {
+    // tslint:disable-next-line:max-line-length
+    this.urls = '';
+    this.auth.latestUrl.subscribe( curUrl => {
+      this.urls = '' + curUrl;
+      console.log(this.urls);
+    });
   }
 
-  loadRecords() {
-    // const path = firebase.storage()
-    //   console.log(path);
-    //   this.urls.push(path);
-    // .then( res => {
-      //   console.log(res);
-      //   this.urls.push(res);
-      // })
-      // .catch(error => {
-      //   console.log(error);
-      // });
+  ngOnInit() {
+    this.auth.getImages().pipe(
+      map(actions => {
+        return actions.map( a => {
+          this.urls += a.url + ';';
+        });
+      })
+    );
+    console.log(this.urls);
   }
 
 }

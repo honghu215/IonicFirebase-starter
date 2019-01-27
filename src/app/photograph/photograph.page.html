@@ -21,6 +21,12 @@
       <ion-img [src]="imgUrl"></ion-img>
     </ion-item>
   </ion-list>
+
+  <ion-list *ngFor="let url of imageUrls">
+    <ion-item>
+        <qrcode [qrdata]="url" [size]="256" [level]="'M'"></qrcode>
+    </ion-item>
+  </ion-list>
   
   <ion-button expand="full" *ngIf="captureDataUrl" (click)="upload()">Upload</ion-button>
   <div>

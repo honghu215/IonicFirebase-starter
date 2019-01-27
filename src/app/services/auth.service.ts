@@ -16,15 +16,20 @@ const USERID_KEY = 'UserId';
 })
 export class AuthService {
   authChange = new Subject<boolean>();
+  latestUrl = new Subject<String>();
   private isAuthenticated = false;
   imageCollections: AngularFirestoreCollection<Image>;
   images: Observable<Image[]>;
-
+  userId: string;
   constructor(private afAuth: AngularFireAuth,
               private router: Router,
               private storage: Storage,
               private db: AngularFirestore) {
 
+                this.storage.get(USERID_KEY).then(uid => {
+                  this.userId = uid;
+                });
+                console.log(this.userId);
                 this.imageCollections = db.collection<Image>('images');
                 this.images = this.imageCollections.snapshotChanges().pipe(
                   map(actions => {
@@ -32,11 +37,12 @@ export class AuthService {
                       const data = action.payload.doc.data();
                       console.log(data);
                       return {
-                        ...data
+                        url: data.url
                       };
                     });
                   })
                 );
+                this.latestUrl.next('');
                }
 
 
@@ -48,6 +54,7 @@ export class AuthService {
 
   getImages() {
     return this.images;
+    console.log(JSON.stringify(this.images));
   }
 
   registerUser(authData: AuthData) {
@@ -89,6 +96,9 @@ export class AuthService {
   private authSuccessfully() {
     this.isAuthenticated = true;
     this.authChange.next(true);
+    this.storage.get(USERID_KEY).then(res => {
+      console.log(res, typeof(res));
+    });
     this.router.navigate(['/home']);
   }
 

@@ -106,8 +106,12 @@ export class PhotographPage implements OnInit {
     await loading.present();
 
     return new Promise((resolve, reject) => {
-      console.log('' + this.storage.get(USERID_KEY) + '/');
-      const fileRef = firebase.storage().ref('' + this.storage.get(USERID_KEY) + '/' + imgBlobInfo.fileName);
+      let userId;
+      this.storage.get(USERID_KEY).then( uid => {
+        userId = uid;
+      });
+      console.log(userId);
+      const fileRef = firebase.storage().ref(userId + '/' + imgBlobInfo.fileName);
       const uploadTask = fileRef.put(imgBlobInfo.imgBlob);
 
       uploadTask.on('state_changed',
@@ -119,12 +123,14 @@ export class PhotographPage implements OnInit {
           reject(_error);
         },
         () => {
-          uploadTask.snapshot.ref.getDownloadURL().then(function (downloadURL) {
-            console.log('File available at', downloadURL);
-            this.imageUrls.push(downloadURL);
-            this.saveImageToDatabase(downloadURL);
+          uploadTask.snapshot.ref.getDownloadURL().then( (downloadURL) => {
+            const url = downloadURL;
+            this.saveImageToDatabase(url);
+            console.log('File available at', url);
+            this.imageUrls.push(url);
+            this.auth.latestUrl.next(url);
+            loading.dismiss();
           });
-          loading.dismiss();
         }
       );
     });

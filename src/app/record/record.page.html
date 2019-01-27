@@ -9,9 +9,5 @@
 
 <ion-content padding>
 
-  <ion-list *ngFor="let url of urls">
-    <ion-item>
-      <img [src]="url">
-    </ion-item>
-  </ion-list>
-</ion-content>
+    <qrcode [qrdata]="urls" [size]="256" [level]="'M'"></qrcode>
+  </ion-content>
