@@ -3,6 +3,7 @@ import { Camera, CameraOptions } from '@ionic-native/camera';
 import { Image, ImageService } from './../services/image.service';
 import { Subject } from 'rxjs';
 import * as firebase from 'firebase';
+import { AlertController } from '@ionic/angular';
 
 
 @Component({
@@ -12,12 +13,12 @@ import * as firebase from 'firebase';
 })
 export class PhotographPage implements OnInit {
   gotUrl = new Subject<Boolean>();
-  imageRecords: Image[];
   errorMsg = '';
-  captureDataUrl: string;
-  imageUrls: string[];
+  captureDataUrl = '';
+  imageUrls = [];
+  storageRef: any;
 
-  constructor() { }
+  constructor(private alertCtl: AlertController) { }
 
   ngOnInit() {
     this.gotUrl.next(false);
@@ -34,34 +35,43 @@ export class PhotographPage implements OnInit {
       saveToPhotoAlbum: true
     };
 
-
-    // Camera.getPicture(cameraOptions).then( imagePath => {
-    //   this.captureDataUrl = imagePath;
-    //   this.gotUrl.next(true);
-    //   this.imageUrls.push(imagePath);
-    // }, error => {
-    //   console.log(error);
-    //   this.errorMsg = error;
-    // });
     Camera.getPicture(cameraOptions).then( (imagePath) => {
-      console.log(imagePath);
-      // this.captureDataUrl = 'data:image/jpeg;base64,' + imagePath;
+      // console.log(imagePath);
       this.captureDataUrl = 'data:image/jpeg;base64,' + imagePath;
-      console.log(this.captureDataUrl);
-      this.imageUrls.push(this.captureDataUrl);
+      // console.log(this.captureDataUrl);
+      this.imageUrls.push({
+        url: this.captureDataUrl,
+        checked: false
+      });
       this.gotUrl.next(true);
+      // this.upload();
     }, error => {
       this.errorMsg = error;
     });
   }
 
   upload() {
-    let storageRef = firebase.storage().ref();
+    this.storageRef = firebase.storage().ref();
     // Create a timestamp as filename
     const filename = Math.floor(Date.now() / 1000);
 
     // Create a reference to 'images/todays-date.jpg'
-    const imageRef = storageRef.child(`images/${filename}.jpg`);
+    const imageRef = this.storageRef.child(`images/${filename}.jpg`);
+    imageRef.putString(this.captureDataUrl, firebase.storage.StringFormat.DATA_URL).then((snapshot) => {
+      this.showSuccesfulUploadAlert();
+      console.log('Upload success.');
+    });
+  }
+
+  async showSuccesfulUploadAlert() {
+    const alert = await this.alertCtl.create({
+      header: 'Uploaded!',
+      subHeader: 'Picture is uploaded!',
+      message: 'This picture is successfully uploaded!',
+      buttons: ['OK']
+    });
+    await alert.present();
+    this.captureDataUrl = '';
   }
 
 
