@@ -16,16 +16,16 @@ export class AppComponent implements OnInit {
       url: '/home',
       icon: 'home'
     },
-    {
-      title: 'List',
-      url: '/list',
-      icon: 'list'
-    },
-    {
-      title: 'Todo',
-      url: '/todos',
-      icon: 'book'
-    },
+    // {
+    //   title: 'List',
+    //   url: '/list',
+    //   icon: 'list'
+    // },
+    // {
+    //   title: 'Todo',
+    //   url: '/todos',
+    //   icon: 'book'
+    // },
     {
       title: 'Photograph',
       url: '/photograph',
@@ -35,6 +35,11 @@ export class AppComponent implements OnInit {
       title: 'Record',
       url: '/record',
       icon: 'url'
+    },
+    {
+      title: 'Advisor',
+      url: '/advisor',
+      icon: 'person'
     }
   ];
 

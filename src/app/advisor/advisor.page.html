@@ -1,0 +1,30 @@
+<ion-header>
+    <ion-toolbar color="primary">
+      <ion-buttons slot="start">
+        <ion-menu-button></ion-menu-button>
+      </ion-buttons>
+      <ion-title>Chat Room</ion-title>
+    </ion-toolbar>
+  </ion-header>
+
+<ion-content padding="20px 0 20px 0">
+
+  <ion-list *ngFor="let message of conversation">
+
+    <ion-item>
+      <ion-icon name="book"></ion-icon>
+      <p>{{ message.from }}</p>
+      <h4><span style="background-color:  olivedrab;">{{ message.content }}</span></h4>
+    </ion-item>
+
+  </ion-list>
+
+  <ion-list >
+    <form class="appForm">
+      <ion-input class="full-width" #message maxlength="256" placeholder="Message" style="background-color: navajowhite;">
+      </ion-input>
+      <ion-button item-bottom expand="full" (click)="addMessageFromUser(message)">Send</ion-button>
+    </form>
+  </ion-list>
+
+</ion-content>

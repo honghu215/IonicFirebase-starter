@@ -23,7 +23,8 @@ const routes: Routes = [
   { path: 'login', loadChildren: './login/login.module#LoginPageModule' },
   { path: 'signup', loadChildren: './signup/signup.module#SignupPageModule' },
   { path: 'tutorial', loadChildren: './tutorial/tutorial.module#TutorialPageModule' },
-  { path: 'record', loadChildren: './record/record.module#RecordPageModule' }
+  { path: 'record', loadChildren: './record/record.module#RecordPageModule' },
+  { path: 'advisor', loadChildren: './advisor/advisor.module#AdvisorPageModule' }
 ];
 
 @NgModule({
