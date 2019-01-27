@@ -1,3 +1,4 @@
+import { EducationPageModule } from './education/education.module';
 import { RecordPageModule } from './record/record.module';
 import { IonicStorageModule } from '@ionic/storage';
 import { AngularFireAuth, AngularFireAuthModule } from 'angularfire2/auth';
@@ -42,7 +43,8 @@ firebase.initializeApp(environment.firebase);
     SignupPageModule,
     AngularFireAuthModule,
     RecordPageModule,
-    AngularFireDatabaseModule
+    AngularFireDatabaseModule,
+    EducationPageModule
   ],
   providers: [
     StatusBar,
