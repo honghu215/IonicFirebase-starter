@@ -1,11 +1,14 @@
+import { AngularFirestoreCollection, AngularFirestore } from 'angularfire2/firestore';
+import { AngularFireDatabase } from 'angularfire2/database';
 import { AuthService } from './../services/auth.service';
 import { Storage } from '@ionic/storage';
 import { Component, OnInit } from '@angular/core';
 import { Camera, CameraOptions } from '@ionic-native/camera/ngx';
-import { Subject } from 'rxjs';
+import { Subject, Observable } from 'rxjs';
 import * as firebase from 'firebase';
 import { AlertController, LoadingController } from '@ionic/angular';
 import { File } from '@ionic-native/file/ngx';
+import { map } from 'rxjs/operators';
 
 
 const USERID_KEY = 'UserId';
@@ -22,6 +25,8 @@ export class PhotographPage implements OnInit {
   storageRef: any;
   downloadUrl = '';
 
+  imageCollection: AngularFirestoreCollection<string>;
+  images: Observable<string[]>;
   constructor(private alertCtl: AlertController,
     private file: File,
     private camera: Camera,
@@ -43,25 +48,15 @@ export class PhotographPage implements OnInit {
       saveToPhotoAlbum: true
     };
 
-    // const imgInfo = await this.camera.getPicture(cameraOptions);
-    // this.camera.getPicture(cameraOptions).then( imgPath => {
-
-    //   this.imageUrls.push('data:image/jpeg;base64,' + imgPath);
-    //   const blobInfo = this.makeFileIntoBlob(imgPath);
-    // }, error => {
-    //   console.log(error);
-    // });
-    // const storageRef = firebase.storage().ref();
-    // const uploadTask = storageRef.child(`${this.storage.get(USERID_KEY)}/${Math.floor(Date.now() / 1000)}`).put(imgInfo);
     try {
       const imgInfo = await this.camera.getPicture(cameraOptions);
 
-      this.imageUrls.push(imgInfo);
       const blobInfo = await this.makeFileIntoBlob(imgInfo);
 
       const uploadInfo: any = await this.upload(blobInfo);
 
       alert('File Upload Success ' + uploadInfo.fileName);
+      console.log(this.imageUrls);
     } catch (e) {
       console.log(e.message);
       alert('File Upload Error ' + e.message);
@@ -106,12 +101,13 @@ export class PhotographPage implements OnInit {
   }
   async upload(imgBlobInfo) {
     const loading = await this.loadingController.create({
-      message: 'Uploading to firebase...'
+      message: 'Uploading...'
     });
     await loading.present();
 
     return new Promise((resolve, reject) => {
-      const fileRef = firebase.storage().ref('images/' + imgBlobInfo.fileName);
+      console.log('' + this.storage.get(USERID_KEY) + '/');
+      const fileRef = firebase.storage().ref('' + this.storage.get(USERID_KEY) + '/' + imgBlobInfo.fileName);
       const uploadTask = fileRef.put(imgBlobInfo.imgBlob);
 
       uploadTask.on('state_changed',
@@ -123,15 +119,21 @@ export class PhotographPage implements OnInit {
           reject(_error);
         },
         () => {
-          loading.dismiss();
           uploadTask.snapshot.ref.getDownloadURL().then(function (downloadURL) {
             console.log('File available at', downloadURL);
+            this.imageUrls.push(downloadURL);
+            this.saveImageToDatabase(downloadURL);
           });
+          loading.dismiss();
         }
       );
     });
   }
 
+  async saveImageToDatabase(downloadURL: string) {
+    this.auth.saveImage(downloadURL);
+    console.log('Uploading to firebase database');
+  }
   async showSuccesfulUploadAlert() {
     const alert = await this.alertCtl.create({
       header: 'Uploaded!',

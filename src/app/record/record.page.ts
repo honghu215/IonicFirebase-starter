@@ -12,11 +12,9 @@ export class RecordPage implements OnInit {
   constructor(private auth: AuthService) { }
 
   ngOnInit() {
-    this.loadRecords();
   }
 
   loadRecords() {
-    this.auth.getBucketList();
     // const path = firebase.storage()
     //   console.log(path);
     //   this.urls.push(path);
