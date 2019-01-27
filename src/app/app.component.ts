@@ -16,6 +16,11 @@ export class AppComponent {
       icon: 'home'
     },
     {
+      title: 'User',
+      url: '/user',
+      icon: 'contacts'
+    },
+    {
       title: 'List',
       url: '/list',
       icon: 'list'
@@ -24,6 +29,26 @@ export class AppComponent {
       title: 'Todo',
       url: '/todos',
       icon: 'book'
+    },
+    {
+      title: 'Education',
+      url: '/education',
+      icon: 'school'
+    },
+    {
+      title: 'Document',
+      url: '/document',
+      icon: 'document'
+    },
+    {
+      title: 'Advisor',
+      url: '/advisor',
+      icon: 'text'
+    },
+    {
+      title: 'Tracking',
+      url: '/tracking',
+      icon: 'filing'
     },
   ];
 
