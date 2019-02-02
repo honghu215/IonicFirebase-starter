@@ -24,6 +24,8 @@ const routes: Routes = [
   { path: 'signup', loadChildren: './signup/signup.module#SignupPageModule' },
   { path: 'tutorial', loadChildren: './tutorial/tutorial.module#TutorialPageModule' },
   { path: 'record', loadChildren: './record/record.module#RecordPageModule' },
+  { path: 'record-detail', loadChildren: './record/record-detail/record-detail.module#RecordDetailPageModule' },
+  { path: 'record-detail/:id', loadChildren: './record/record-detail/record-detail.module#RecordDetailPageModule' },
   { path: 'advisor', loadChildren: './advisor/advisor.module#AdvisorPageModule' },
   { path: 'education', loadChildren: './education/education.module#EducationPageModule' },
   { path: 'logout', redirectTo: '/home'}

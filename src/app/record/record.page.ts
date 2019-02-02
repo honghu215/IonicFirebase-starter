@@ -13,8 +13,15 @@ import { Subscription } from 'rxjs';
 export class RecordPage implements OnInit, OnDestroy {
   images: Image[];
   imageSubscription: Subscription;
+  isLoggedin: boolean;
 
   constructor(private auth: AuthService) {
+    this.auth.authChange.subscribe(status => {
+      this.isLoggedin = status;
+      if (!status) {
+        this.images = null;
+      }
+    });
   }
 
   ngOnInit() {

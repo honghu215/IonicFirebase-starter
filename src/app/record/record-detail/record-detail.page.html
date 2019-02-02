@@ -1,0 +1,12 @@
+<ion-header>
+  <ion-toolbar color="primary">
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/record"></ion-back-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content padding>
+  <img [src]="image.url">
+  <qrcode [qrdata]="image.url" [size]="256" [level]="'M'"></qrcode>
+</ion-content>

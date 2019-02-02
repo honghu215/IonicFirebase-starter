@@ -44,6 +44,10 @@ export class AuthService {
     });
   }
 
+  getImage(imageId) {
+    return this.imageCollections.doc<Image>(imageId).valueChanges();
+  }
+
   getImages() {
     if (window.localStorage.getItem(USERID_KEY) === null) {
       return new Observable<Image[]>();
@@ -55,8 +59,10 @@ export class AuthService {
       map(actions => {
         return actions.map(action => {
           const data = action.payload.doc.data();
+          const id = action.payload.doc.id;
           console.log(data.url, data.createdAt);
           return {
+            id: id,
             url: data.url,
             createdAt: data.createdAt
           };
@@ -91,7 +97,8 @@ export class AuthService {
         this.userId = result.user.uid;
         this.saveUserId(result.user.uid);
         this.authSuccessfully();
-        this.initDB();
+        // this.initDB();
+        this.getImages();
       })
       .catch(error => {
         this.alertMsg('Login Failed', 'Error', error, ['OK']);
@@ -124,7 +131,6 @@ export class AuthService {
   }
 
   private initDB() {
-    
     this.getImages();
     // this.images = this.imageCollections.snapshotChanges().pipe(
     //   map(actions => {
