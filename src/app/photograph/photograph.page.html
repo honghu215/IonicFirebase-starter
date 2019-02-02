@@ -11,25 +11,31 @@
 
   <div style="display:flex; flex-direction: column; justify-content: center">
     <!-- <ion-icon name="camera"></ion-icon> -->
-    <ion-button expand="full" (click)="capture()" [disabled]="!isLoggedin">Let's take a picture!</ion-button>
-    <!-- <img [src]="captureDataUrl"  *ngIf="captureDataUrl"/> -->
+    <!-- <ion-button expand="full" (click)="capture()" [disabled]="!isLoggedin">Let's take a picture!</ion-button> -->
+    <ion-button expand="full" (click)="capture()">Let's take a picture!</ion-button>
   </div>
 
-  <ion-list *ngFor="let imgUrl of imageUrls">
+  <!-- <ion-list *ngFor="let imgUrl of imageUrls">
     <ion-item>
       <img [src]="imgUrl">
       <ion-img [src]="imgUrl"></ion-img>
     </ion-item>
+  </ion-list> -->
+  <ion-list *ngFor="let image of images">
+    <ion-item>
+      <!-- <span>{{ image.createdAt | date }}</span> -->
+      <img [src]="image.url">
+    </ion-item>
   </ion-list>
 
-  <ion-list *ngFor="let url of imageUrls">
+  <!-- <ion-list *ngFor="let url of imageUrls">
     <ion-item>
         <qrcode [qrdata]="url" [size]="256" [level]="'M'"></qrcode>
     </ion-item>
-  </ion-list>
+  </ion-list> -->
   
-  <ion-button expand="full" *ngIf="captureDataUrl" (click)="upload()">Upload</ion-button>
+  <!-- <ion-button expand="full" *ngIf="captureDataUrl" (click)="upload()">Upload</ion-button>
   <div>
     <p>{{ errorMsg }}</p>
-  </div>
+  </div> -->
 </ion-content>

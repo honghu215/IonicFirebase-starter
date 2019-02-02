@@ -9,9 +9,9 @@ import * as firebase from 'firebase';
 import { AlertController, LoadingController } from '@ionic/angular';
 import { File } from '@ionic-native/file/ngx';
 import { map } from 'rxjs/operators';
+import { Image } from '../services/image.service';
 
 
-const USERID_KEY = 'UserId';
 @Component({
   selector: 'app-photograph',
   templateUrl: './photograph.page.html',
@@ -27,7 +27,8 @@ export class PhotographPage implements OnInit {
   isLoggedin = false;
 
   imageCollection: AngularFirestoreCollection<string>;
-  images: Observable<string[]>;
+  images: Image[];
+
   constructor(private alertCtl: AlertController,
     private file: File,
     private camera: Camera,
@@ -37,9 +38,13 @@ export class PhotographPage implements OnInit {
 
   ngOnInit() {
     this.gotUrl.next(false);
-    this.auth.authChange.subscribe( logStatus => {
+    this.auth.authChange.subscribe(logStatus => {
       this.isLoggedin = logStatus;
     });
+    this.auth.getImages().subscribe( data => {
+      this.images = data;
+    });
+    // console.log(`Images: ${this.images.}`);
   }
 
   async capture() {
@@ -80,11 +85,11 @@ export class PhotographPage implements OnInit {
 
           // get the path..
           const path = nativeURL.substring(0, nativeURL.lastIndexOf('/'));
-          console.log('path', path);
-          console.log('fileName', name);
+
 
           fileName = name;
-
+          console.log('path', path);
+          console.log('fileName', name);
           // we are provided the name, so now read the file into
           // a buffer
           return this.file.readAsArrayBuffer(path, name);
@@ -109,13 +114,16 @@ export class PhotographPage implements OnInit {
     });
     await loading.present();
 
+
     return new Promise((resolve, reject) => {
-      let userId;
-      this.storage.get(USERID_KEY).then( uid => {
-        userId = uid;
-      });
-      console.log(userId);
-      const fileRef = firebase.storage().ref(userId + '/' + imgBlobInfo.fileName);
+      const userId = this.auth.getUserId();
+      console.log('user id: ', userId);
+      const currDateTime = new Date();
+      const fileName = currDateTime.getFullYear() + '-' + (currDateTime.getMonth() + 1) + '-' + currDateTime.getDay()
+                    + '-' + currDateTime.getHours() + ':' + currDateTime.getMinutes() + ':' + currDateTime.getSeconds();
+      console.log(`imgBlob filename: ${imgBlobInfo.fileName}`);
+      console.log(`fileName append: ${fileName}`);
+      const fileRef = firebase.storage().ref(userId + '/' + fileName + imgBlobInfo.fileName);
       const uploadTask = fileRef.put(imgBlobInfo.imgBlob);
 
       uploadTask.on('state_changed',
@@ -127,12 +135,12 @@ export class PhotographPage implements OnInit {
           reject(_error);
         },
         () => {
-          uploadTask.snapshot.ref.getDownloadURL().then( (downloadURL) => {
+          uploadTask.snapshot.ref.getDownloadURL().then((downloadURL) => {
             const url = downloadURL;
             this.saveImageToDatabase(url);
             console.log('File available at', url);
             this.imageUrls.push(url);
-            this.auth.latestUrl.next(url);
+            // this.auth.latestUrl.next(url);
             loading.dismiss();
           });
         }

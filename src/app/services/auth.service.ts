@@ -1,3 +1,4 @@
+import { AlertController } from '@ionic/angular';
 import { Image } from './image.service';
 import { Injectable } from '@angular/core';
 import { AngularFireAuth } from 'angularfire2/auth';
@@ -21,46 +22,37 @@ export class AuthService {
   imageCollections: AngularFirestoreCollection<Image>;
   images: Observable<Image[]>;
   userId: string;
-  constructor(private afAuth: AngularFireAuth,
-              private router: Router,
-              private storage: Storage,
-              private db: AngularFirestore) {
 
-                this.storage.get(USERID_KEY).then(uid => {
-                  this.userId = uid;
-                });
-                console.log(this.userId);
-                this.imageCollections = db.collection<Image>('images');
-                this.images = this.imageCollections.snapshotChanges().pipe(
-                  map(actions => {
-                    return actions.map( action => {
-                      const data = action.payload.doc.data();
-                      console.log(data);
-                      return {
-                        url: data.url
-                      };
-                    });
-                  })
-                );
-                this.latestUrl.next('');
-               }
+  constructor(private afAuth: AngularFireAuth,
+    private router: Router,
+    private storage: Storage,
+    private db: AngularFirestore,
+    private alertClt: AlertController) {
+
+    // this.storage.get(USERID_KEY).then(uid => {
+    //   this.userId = uid;
+    // });
+    // console.log(this.userId);
+  }
 
 
   saveImage(url: string) {
+    console.log('Saving image to database...');
     this.imageCollections.add({
-      url: url
+      url: url,
+      createdAt: new Date()
     });
   }
 
   getImages() {
-    return this.images;
     console.log(JSON.stringify(this.images));
+    return this.images;
   }
 
   registerUser(authData: AuthData) {
     this.afAuth.auth
       .createUserWithEmailAndPassword(authData.email, authData.password)
-      .then( result => {
+      .then(result => {
         console.log(result);
         this.storage.set(USERID_KEY, result.user.uid);
         this.authSuccessfully();
@@ -73,35 +65,78 @@ export class AuthService {
   login(authData: AuthData) {
     this.afAuth.auth
       .signInWithEmailAndPassword(authData.email, authData.password)
-      .then( result => {
+      .then(result => {
         console.log(result);
+        this.storage.remove(USERID_KEY);
         this.storage.set(USERID_KEY, result.user.uid);
+        console.log(result.user.uid);
+        this.userId = result.user.uid;
+        this.saveUserId(result.user.uid);
         this.authSuccessfully();
+        this.initDB();
       })
       .catch(error => {
+        this.alertMsg('Login Failed', 'Error', error, ['OK']);
         console.log(error);
       });
+  }
+
+  async alertMsg(header: string, subHeader: string, message: string, buttons: string[]) {
+    const alert = await this.alertClt.create({
+      header: header,
+      subHeader: subHeader,
+      message: message,
+      buttons: buttons
+    });
+    await alert.present();
   }
 
   logout() {
     this.authChange.next(false);
     this.isAuthenticated = false;
-    this.storage.remove(USERID_KEY);
+    // this.storage.remove(USERID_KEY);
+    window.localStorage.removeItem(USERID_KEY);
+    this.images = new Observable<Image[]>();
+    this.router.navigate(['/home']);
   }
 
   isAuth() {
     return this.isAuthenticated;
   }
 
+  private initDB() {
+    const ID = this.getUserId();
+    console.log('Initializing DB... User ID: ', ID);
+    this.imageCollections = this.db.collection<Image>(ID);
+    this.images = this.imageCollections.snapshotChanges().pipe(
+      map(actions => {
+        return actions.map(action => {
+          const data = action.payload.doc.data();
+          console.log(data.url, data.createdAt);
+          return {
+            url: data.url,
+            createdAt: data.createdAt
+          };
+        });
+      })
+    );
+
+    // this.images.forEach(image => console.log())
+    // this.latestUrl.next('');
+  }
+
   private authSuccessfully() {
     this.isAuthenticated = true;
     this.authChange.next(true);
-    this.storage.get(USERID_KEY).then(res => {
-      console.log(res, typeof(res));
-    });
     this.router.navigate(['/home']);
   }
 
-  
+  public saveUserId(id: string) {
+    window.localStorage.removeItem(USERID_KEY);
+    window.localStorage.setItem(USERID_KEY, id);
+  }
 
+  public getUserId(): string {
+    return window.localStorage.getItem(USERID_KEY);
+  }
 }
