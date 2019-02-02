@@ -25,7 +25,8 @@ const routes: Routes = [
   { path: 'tutorial', loadChildren: './tutorial/tutorial.module#TutorialPageModule' },
   { path: 'record', loadChildren: './record/record.module#RecordPageModule' },
   { path: 'advisor', loadChildren: './advisor/advisor.module#AdvisorPageModule' },
-  { path: 'education', loadChildren: './education/education.module#EducationPageModule' }
+  { path: 'education', loadChildren: './education/education.module#EducationPageModule' },
+  { path: 'logout', redirectTo: '/home'}
 ];
 
 @NgModule({
