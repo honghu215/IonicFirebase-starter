@@ -1,0 +1,23 @@
+<ion-header>
+
+    <ion-navbar color="dark">
+      <ion-title>Groups</ion-title>
+      <ion-buttons right>
+        <button ion-button icon-only (click)="startGroup()">
+          <ion-icon name="add"></ion-icon>
+        </button>
+      </ion-buttons>
+    </ion-navbar>
+  
+  </ion-header>
+  
+  
+  <ion-content>
+    <ion-list>
+      <ion-item *ngFor="let chat of chats" tappable (click)="openChatRoom(chat.id)">
+        <div *ngFor="let member of chat.member; let isLast=last" style="float: left;">
+          {{ member.nickname }}{{ isLast ? '' : ', '}}
+        </div>
+      </ion-item>
+    </ion-list>
+  </ion-content>

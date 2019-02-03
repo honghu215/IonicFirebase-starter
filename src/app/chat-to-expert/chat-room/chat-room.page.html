@@ -1,0 +1,44 @@
+<ion-header>
+
+    <ion-navbar color="dark">
+      <ion-title>
+        {{ chatTitle }}
+      </ion-title>
+    </ion-navbar>
+  
+  </ion-header>
+  
+  
+  <ion-content #content padding>
+    <ion-grid>
+      <ion-row *ngFor="let message of messages | async">
+        <ion-col col-9 col-md-6 *ngIf="message.from !== currentUserId" class="message other-message">
+          <span>{{ message.msg }}</span>
+          <div class="time">{{ message.createdAt | date:'short' }}</div>
+        </ion-col>
+  
+        <ion-col offset-3 offset-md-6 col-9 col-md-6 *ngIf="message.from === currentUserId" class="message my-message">
+          <span>{{ message.msg }}</span>
+          <div class="time">{{ message.createdAt | date:'short' }}</div>
+        </ion-col>
+  
+      </ion-row>
+    </ion-grid>
+  </ion-content>
+  
+  <ion-footer>
+    <ion-toolbar>
+      <ion-row no-padding align-items-center>
+        <ion-col col-10>
+          <ion-item no-lines>
+            <ion-input type="text" placeholder="Message" [(ngModel)]="message"></ion-input>
+          </ion-item>
+        </ion-col>
+        <ion-col col-2 text-center>
+          <button ion-button full icon-only clear color="primary" [disabled]="message === ''" class="msg-btn" (click)="sendMessage()">
+            <ion-icon name="ios-send"></ion-icon>
+          </button>
+        </ion-col>
+      </ion-row>
+    </ion-toolbar>
+  </ion-footer>

@@ -12,6 +12,13 @@
   <form [formGroup]="singupForm" (ngSubmit)="onSubmit()" autocomplete="off">
     <ion-list inset>
       <ion-item>
+          <ion-label position="stacked" color="primary">Username</ion-label>
+          <ion-input formControlName="username" name="username" type="text" required>
+          </ion-input>
+      </ion-item>
+      <ion-item *ngIf="singupForm.controls.username.hasError('required') && singupForm.controls.username.touched"><span class="error-signup">Username is required</span></ion-item>
+
+      <ion-item>
         <ion-label position="stacked" color="primary">Email</ion-label>
         <ion-input formControlName="email" name="email" type="text" required>
         </ion-input>

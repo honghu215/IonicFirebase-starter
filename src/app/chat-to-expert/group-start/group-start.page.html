@@ -1,0 +1,25 @@
+<ion-header>
+
+    <ion-navbar color="dark">
+      <ion-buttons left>
+        <button ion-button icon-only (click)="close()">
+          <ion-icon name="close"></ion-icon>
+        </button>
+      </ion-buttons>
+      <ion-title>Start a Chat</ion-title>
+    </ion-navbar>
+  
+  </ion-header>
+  
+  
+  <ion-content>
+  <ion-searchbar (ionInput)="filterItems()" [(ngModel)]="search"></ion-searchbar>
+  
+  <ion-list>
+    <ion-item *ngFor="let user of filteredUsers | async" (click)="startChat(user.id)" tappable>
+      {{ user.username }}
+      <ion-icon item-end name="arrow-forward"></ion-icon>
+    </ion-item>
+  </ion-list>
+  </ion-content>
+  

@@ -1,3 +1,8 @@
+import { ChatRoomPageModule } from './chat-to-expert/chat-room/chat-room.module';
+import { GroupStartPageModule } from './chat-to-expert/group-start/group-start.module';
+import { GroupsPageModule } from './chat-to-expert/groups/groups.module';
+import { ChatToExpertPageModule } from './chat-to-expert/chat-to-expert.module';
+import { ChatToExpertPage } from './chat-to-expert/chat-to-expert.page';
 import { HomePageModule } from './home/home.module';
 import { EducationPageModule } from './education/education.module';
 import { RecordPageModule } from './record/record.module';
@@ -46,7 +51,11 @@ firebase.initializeApp(environment.firebase);
     RecordPageModule,
     AngularFireDatabaseModule,
     EducationPageModule,
-    HomePageModule
+    HomePageModule,
+    ChatToExpertPageModule,
+    GroupsPageModule,
+    GroupStartPageModule,
+    ChatRoomPageModule
   ],
   providers: [
     StatusBar,

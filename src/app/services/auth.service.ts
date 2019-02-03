@@ -11,6 +11,8 @@ import { IonicStorageModule, Storage } from '@ionic/storage';
 import { AngularFireDatabase } from 'angularfire2/database';
 import { AngularFirestore, AngularFirestoreCollection } from 'angularfire2/firestore';
 
+import 'rxjs/add/operator/map';
+
 const USERID_KEY = 'UserId';
 @Injectable({
   providedIn: 'root'
@@ -23,10 +25,13 @@ export class AuthService {
   images: Observable<Image[]>;
   userId: string;
 
+  usersRef = this.afdb.list('users');
+
   constructor(private afAuth: AngularFireAuth,
     private router: Router,
     private storage: Storage,
     private db: AngularFirestore,
+    private afdb: AngularFireDatabase,
     private alertClt: AlertController) {
 
     const ID = this.getUserId();
@@ -81,8 +86,11 @@ export class AuthService {
         const user = firebase.auth().currentUser;
         if (user && !user.emailVerified) {
           user.sendEmailVerification().then(() => {
-            // this.storage.set(USERID_KEY, result.user.uid);
-            // this.authSuccessfully();
+            // save user id and name to database
+            this.usersRef.set(this.afAuth.auth.currentUser.uid, {
+              username: authData.username
+            });
+
             this.alertMsg('Email Verification', '', 'Email Verification link is sent, go to check it in your mailbox', ['OK']);
             console.log('Email verification sent, please check your mailbox.');
             this.router.navigate(['/login']);
@@ -98,7 +106,7 @@ export class AuthService {
       });
   }
 
-  login(authData: AuthData) {
+  login(authData: {email: string, password: string}) {
     this.afAuth.auth
       .signInWithEmailAndPassword(authData.email, authData.password)
       .then(result => {
@@ -174,5 +182,26 @@ export class AuthService {
 
   public getUserId(): string {
     return window.localStorage.getItem(USERID_KEY);
+  }
+
+  getAllUsers() {
+    return this.usersRef.snapshotChanges().
+      map(actions => {
+        return actions.map(action => ({
+          id: action.key,
+          ...action.payload.val()
+        }));
+      })
+      .map(users => {
+        return users.filter(user => user.id !== this.afAuth.auth.currentUser.uid);
+      });
+  }
+
+  getUsername(id) {
+    return this.afdb.object('users/' + id + '/username').valueChanges();
+  }
+
+  getCurrentUserId() {
+    return this.afAuth.auth.currentUser.uid;
   }
 }

@@ -10,13 +10,21 @@ import { Component, OnInit } from '@angular/core';
   styleUrls: ['./signup.page.scss'],
 })
 export class SignupPage implements OnInit {
-  authData: AuthData = { email: '', password: '' };
+  authData: AuthData = {
+    username: '',
+    email: '',
+    password: ''
+  };
+
   singupForm: FormGroup;
 
   constructor(private authService: AuthService) { }
 
   ngOnInit() {
     this.singupForm = new FormGroup({
+      username: new FormControl('', {
+        validators: [Validators.required]
+      }),
       email: new FormControl('', {
         validators: [Validators.required, Validators.email]
       }),
@@ -28,6 +36,7 @@ export class SignupPage implements OnInit {
 
   onSubmit() {
     this.authService.registerUser({
+      username: this.singupForm.value.username,
       email: this.singupForm.value.email,
       password: this.singupForm.value.password
     });

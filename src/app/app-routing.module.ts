@@ -28,7 +28,11 @@ const routes: Routes = [
   { path: 'record-detail/:id', loadChildren: './record/record-detail/record-detail.module#RecordDetailPageModule' },
   { path: 'advisor', loadChildren: './advisor/advisor.module#AdvisorPageModule' },
   { path: 'education', loadChildren: './education/education.module#EducationPageModule' },
-  { path: 'logout', redirectTo: '/home'}
+  { path: 'logout', redirectTo: '/home'},
+  { path: 'chat-to-expert', loadChildren: './chat-to-expert/chat-to-expert.module#ChatToExpertPageModule' },
+  { path: 'groups', loadChildren: './chat-to-expert/groups/groups.module#GroupsPageModule' },
+  { path: 'group-start', loadChildren: './chat-to-expert/group-start/group-start.module#GroupStartPageModule' },
+  { path: 'chat-room', loadChildren: './chat-to-expert/chat-room/chat-room.module#ChatRoomPageModule' }
 ];
 
 @NgModule({
