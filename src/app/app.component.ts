@@ -36,11 +36,11 @@ export class AppComponent implements OnInit {
       url: '/record',
       icon: 'list'
     },
-    {
-      title: 'Education',
-      url: '/education',
-      icon: 'book'
-    },
+    // {
+    //   title: 'Education',
+    //   url: '/education',
+    //   icon: 'book'
+    // },
     {
       title: 'Advisor',
       url: '/advisor',
