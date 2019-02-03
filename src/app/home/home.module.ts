@@ -1,3 +1,5 @@
+import { PhotographPage } from './../photograph/photograph.page';
+import { PhotographPageModule } from './../photograph/photograph.module';
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';

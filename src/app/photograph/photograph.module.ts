@@ -24,6 +24,9 @@ const routes: Routes = [
     QRCodeModule,
     RouterModule.forChild(routes)
   ],
+  exports: [
+    PhotographPage
+  ],
   declarations: [PhotographPage]
 })
 export class PhotographPageModule {}

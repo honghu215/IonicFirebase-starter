@@ -11,6 +11,5 @@ export class HomePage implements OnInit {
   constructor(private auth: AuthService) {}
 
   ngOnInit() {
-    // this.auth.getImages().subscribe(res => {});
   }
 }

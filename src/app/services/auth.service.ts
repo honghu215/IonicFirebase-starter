@@ -78,10 +78,21 @@ export class AuthService {
       .createUserWithEmailAndPassword(authData.email, authData.password)
       .then(result => {
         console.log(result);
-        this.storage.set(USERID_KEY, result.user.uid);
-        this.authSuccessfully();
+        const user = firebase.auth().currentUser;
+        if (user && !user.emailVerified) {
+          user.sendEmailVerification().then(() => {
+            // this.storage.set(USERID_KEY, result.user.uid);
+            // this.authSuccessfully();
+            this.alertMsg('Email Verification', '', 'Email Verification link is sent, go to check it in your mailbox', ['OK']);
+            console.log('Email verification sent, please check your mailbox.');
+            this.router.navigate(['/login']);
+          }, error => {
+            console.log(error);
+          });
+        }
       })
       .catch(error => {
+        this.alertMsg('Sign up failed', '', error, ['OK']);
         console.log(error);
       });
   }
@@ -90,19 +101,35 @@ export class AuthService {
     this.afAuth.auth
       .signInWithEmailAndPassword(authData.email, authData.password)
       .then(result => {
-        console.log(result);
-        this.storage.remove(USERID_KEY);
-        this.storage.set(USERID_KEY, result.user.uid);
-        console.log(result.user.uid);
-        this.userId = result.user.uid;
-        this.saveUserId(result.user.uid);
-        this.authSuccessfully();
-        // this.initDB();
-        this.getImages();
+        const user = firebase.auth().currentUser;
+        if (!user.emailVerified) {
+          this.alertMsg('Login failed', '', 'Email address is not verified, go check your mainbox', ['OK']);
+          // return {
+          //   status: 'error',
+          //   message: 'Email address is not verified. Go check your mailbox'
+          // };
+        } else {
+          console.log(result);
+          this.storage.remove(USERID_KEY);
+          this.storage.set(USERID_KEY, result.user.uid);
+          console.log(result.user.uid);
+          this.userId = result.user.uid;
+          this.saveUserId(result.user.uid);
+          this.authSuccessfully();
+          this.getImages();
+          // return {
+          //   status: 'success',
+          //   message: ''
+          // };
+        }
       })
       .catch(error => {
         this.alertMsg('Login Failed', 'Error', error, ['OK']);
         console.log(error);
+        // return {
+        //   status: 'error',
+        //   message: error
+        // };
       });
   }
 
@@ -119,7 +146,6 @@ export class AuthService {
   logout() {
     this.authChange.next(false);
     this.isAuthenticated = false;
-    // this.storage.remove(USERID_KEY);
     window.localStorage.removeItem(USERID_KEY);
     this.images = new Observable<Image[]>();
     this.initDB();
@@ -132,18 +158,6 @@ export class AuthService {
 
   private initDB() {
     this.getImages();
-    // this.images = this.imageCollections.snapshotChanges().pipe(
-    //   map(actions => {
-    //     return actions.map(action => {
-    //       const data = action.payload.doc.data();
-    //       console.log(data.url, data.createdAt);
-    //       return {
-    //         url: data.url,
-    //         createdAt: data.createdAt
-    //       };
-    //     });
-    //   })
-    // );
   }
 
   private authSuccessfully() {

@@ -9,33 +9,28 @@
 
 <ion-content padding>
 
-  <form #f="ngForm" novalidate>
-    <ion-list lines="none">
+  <form [formGroup]="singupForm" (ngSubmit)="onSubmit()" autocomplete="off">
+    <ion-list inset>
       <ion-item>
         <ion-label position="stacked" color="primary">Email</ion-label>
-        <ion-input [(ngModel)]="authData.email" name="email" type="text" #email="ngModel" required>
+        <ion-input formControlName="email" name="email" type="text" required>
         </ion-input>
       </ion-item>
-      <!-- <ion-text color="danger">
-        <p [hidden]="email.valid || submitted == false" padding-left>
-          Email is required
-        </p>
-      </ion-text> -->
+      <ion-item *ngIf="singupForm.controls.email.hasError('required') && singupForm.controls.email.touched"><span class="error-signup">Email is required</span></ion-item>
+      <ion-item *ngIf="singupForm.controls.email.hasError('email') && singupForm.controls.email.touched"><span class="error-signup">Email is invalid</span></ion-item>
 
       <ion-item>
         <ion-label position="stacked" color="primary">Password</ion-label>
-        <ion-input [(ngModel)]="authData.password" name="password" type="password" #password="ngModel" required>
+        <ion-input formControlName="password" name="password" type="password" required minlength="6">
         </ion-input>
       </ion-item>
-      <!-- <ion-text color="danger">
-        <p [hidden]="password.valid || submitted == false" padding-left>
-          Password is required
-        </p>
-      </ion-text> -->
+      <ion-item *ngIf="singupForm.controls.password.hasError('required') && singupForm.controls.password.touched"><span class="error-signup">Password is required</span></ion-item>
+      <ion-item *ngIf="singupForm.controls.password.hasError('minlength') && singupForm.controls.password.touched"><span class="error-signup">Password must contains at least 6 characters</span></ion-item>
+
     </ion-list>
 
     <div padding>
-      <ion-button (click)="onSubmit(f)" type="submit" expand="block">Sign Up</ion-button>
+      <ion-button type="submit" expand="block">Sign Up</ion-button>
     </div>
   </form>
 
