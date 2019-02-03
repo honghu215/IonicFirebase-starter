@@ -27,7 +27,18 @@ export class RecordPage implements OnInit, OnDestroy {
   ngOnInit() {
     this.imageSubscription = this.auth.getImages().subscribe( data => {
       this.images = data;
+      this.images.sort(this.compare);
     });
+  }
+
+  compare(img1: Image, img2: Image) {
+    if (img1.createdAt < img2.createdAt) {
+      return 1;
+    } else if (img1.createdAt > img2.createdAt) {
+      return -1;
+    } else {
+      return 0;
+    }
   }
 
   ngOnDestroy() {

@@ -7,6 +7,8 @@
 </ion-header>
 
 <ion-content padding>
+  <qrcode [qrdata]="image.url" [size]="600" [level]="'Q'"></qrcode>
+  <br><br>
   <img [src]="image.url">
-  <qrcode [qrdata]="image.url" [size]="256" [level]="'M'"></qrcode>
+
 </ion-content>
