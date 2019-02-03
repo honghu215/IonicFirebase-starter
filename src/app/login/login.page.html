@@ -32,6 +32,7 @@
     <div padding>
       <ion-button type="submit" expand="block" [disabled]="!loginForm.valid">Login</ion-button>
     </div>
+    <p style="text-align: center">Create a <a routerLink="/signup">new account</a></p>
     <p class="login-fail" *ngIf="!login_err_msg">{{ login_err_msg }}</p>
   </form>
 </ion-content>
