@@ -30,7 +30,7 @@
     </ion-list>
 
     <div padding>
-      <ion-button type="submit" expand="block">Sign Up</ion-button>
+      <ion-button type="submit" expand="block" [disabled]="!singupForm.valid">Sign Up</ion-button>
     </div>
   </form>
 

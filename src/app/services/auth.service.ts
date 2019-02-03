@@ -87,6 +87,7 @@ export class AuthService {
             console.log('Email verification sent, please check your mailbox.');
             this.router.navigate(['/login']);
           }, error => {
+            this.alertMsg('Sign up failed', '', error, ['OK']);
             console.log(error);
           });
         }
