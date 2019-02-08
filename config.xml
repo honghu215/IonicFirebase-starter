@@ -91,6 +91,12 @@
     </plugin>
     <plugin name="cordova-plugin-file" spec="^6.0.1" />
     <plugin name="cordova-sqlite-storage" spec="2.6.0" />
+    <plugin name="cordova-plugin-facebook4" spec="4.1.0">
+        <variable name="APP_ID" value="340458466794023" />
+        <variable name="APP_NAME" value="social login" />
+        <variable name="FACEBOOK_HYBRID_APP_EVENTS" value="false" />
+        <variable name="FACEBOOK_ANDROID_SDK_VERSION" value="4.38.1" />
+    </plugin>
     <engine name="ios" spec="4.5.5" />
     <engine name="browser" spec="5.0.4" />
 </widget>

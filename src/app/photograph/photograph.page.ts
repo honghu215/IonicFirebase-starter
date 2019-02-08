@@ -121,8 +121,8 @@ export class PhotographPage implements OnInit {
       const currDateTime = new Date();
       const fileName = currDateTime.getFullYear() + '-' + (currDateTime.getMonth() + 1) + '-' + currDateTime.getDay()
                     + '-' + currDateTime.getHours() + ':' + currDateTime.getMinutes() + ':' + currDateTime.getSeconds();
-      console.log(`imgBlob filename: ${imgBlobInfo.fileName}`);
-      console.log(`fileName append: ${fileName}`);
+      // console.log(`imgBlob filename: ${imgBlobInfo.fileName}`);
+      // console.log(`fileName append: ${fileName}`);
       const fileRef = firebase.storage().ref(userId + '/' + fileName + imgBlobInfo.fileName);
       const uploadTask = fileRef.put(imgBlobInfo.imgBlob);
 
@@ -131,6 +131,7 @@ export class PhotographPage implements OnInit {
           console.log('snapshot progess ' + (_snapshot.bytesTransferred / _snapshot.totalBytes) * 100);
         },
         _error => {
+          loading.dismiss();
           console.log(_error);
           reject(_error);
         },
@@ -138,10 +139,11 @@ export class PhotographPage implements OnInit {
           uploadTask.snapshot.ref.getDownloadURL().then((downloadURL) => {
             const url = downloadURL;
             this.saveImageToDatabase(url);
-            console.log('File available at', url);
+            // console.log('File available at', url);
             this.imageUrls.push(url);
             // this.auth.latestUrl.next(url);
             loading.dismiss();
+            this.showSuccesfulUploadAlert();
           });
         }
       );
@@ -154,8 +156,8 @@ export class PhotographPage implements OnInit {
   }
   async showSuccesfulUploadAlert() {
     const alert = await this.alertCtl.create({
-      header: 'Uploaded!',
-      subHeader: 'Picture is uploaded!',
+      header: 'Success',
+      subHeader: '',
       message: 'This picture is successfully uploaded!',
       buttons: ['OK']
     });

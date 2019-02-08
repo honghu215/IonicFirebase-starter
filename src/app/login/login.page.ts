@@ -43,6 +43,10 @@ export class LoginPage implements OnInit {
     // });
   }
 
+  facebookLogin() {
+    this.authService.facebookLogin();
+  }
+
 
 
 }

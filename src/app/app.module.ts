@@ -1,3 +1,4 @@
+import { Facebook } from '@ionic-native/facebook/ngx';
 import { HomePageModule } from './home/home.module';
 import { EducationPageModule } from './education/education.module';
 import { RecordPageModule } from './record/record.module';
@@ -53,6 +54,7 @@ firebase.initializeApp(environment.firebase);
     SplashScreen,
     File,
     Camera,
+    Facebook,
     { provide: RouteReuseStrategy, useClass: IonicRouteStrategy }
   ],
   bootstrap: [AppComponent]

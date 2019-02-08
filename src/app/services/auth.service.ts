@@ -10,6 +10,7 @@ import { AuthData } from './auth-data.model';
 import { IonicStorageModule, Storage } from '@ionic/storage';
 import { AngularFireDatabase } from 'angularfire2/database';
 import { AngularFirestore, AngularFirestoreCollection } from 'angularfire2/firestore';
+import { Facebook } from '@ionic-native/facebook/ngx';
 
 const USERID_KEY = 'UserId';
 @Injectable({
@@ -27,7 +28,8 @@ export class AuthService {
     private router: Router,
     private storage: Storage,
     private db: AngularFirestore,
-    private alertClt: AlertController) {
+    private alertClt: AlertController,
+    private facebook: Facebook) {
 
     const ID = this.getUserId();
     console.log('Initializing DB... User ID: ', ID);
@@ -175,4 +177,27 @@ export class AuthService {
   public getUserId(): string {
     return window.localStorage.getItem(USERID_KEY);
   }
+
+  public async facebookLogin(): Promise<any> {
+    return this.facebook.login(['email'])
+      .then(response => {
+        // console.log(`Response from facebook login: ${JSON.stringify(response)}`);
+        const facebookCredential = firebase.auth.FacebookAuthProvider
+          .credential(response.authResponse.accessToken);
+        this.saveUserId(response.authResponse.userID);
+
+        firebase.auth().signInAndRetrieveDataWithCredential(facebookCredential)
+          .then(success => {
+            // console.log('Firebase success: ' + JSON.stringify(success));
+            this.authSuccessfully();
+          })
+          .catch(Error => {
+            this.alertMsg('Login Failed', '', Error, ['OK']);
+          });
+
+      }).catch((error) => {
+        this.alertMsg('Login Failed', '', error, ['OK']);
+      });
+  }
+
 }

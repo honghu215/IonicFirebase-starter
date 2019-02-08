@@ -1,23 +1,25 @@
 <ion-header>
-    <ion-toolbar color="primary">
-      <ion-buttons slot="start">
-        <ion-menu-button></ion-menu-button>
-      </ion-buttons>
-      <ion-title>Login</ion-title>
-    </ion-toolbar>
-  </ion-header>
+  <ion-toolbar color="primary">
+    <ion-buttons slot="start">
+      <ion-menu-button></ion-menu-button>
+    </ion-buttons>
+    <ion-title>Login</ion-title>
+  </ion-toolbar>
+</ion-header>
 
 <ion-content padding>
   <form [formGroup]="loginForm" autocomplete="on" (ngSubmit)="onSubmit()">
-    
+
     <ion-list inset>
       <ion-item>
         <ion-label position="stacked" color="primary">Email</ion-label>
-        <ion-input formControlName="email" name="email" type="text" required>       
+        <ion-input formControlName="email" name="email" type="text" required>
         </ion-input>
       </ion-item>
-      <ion-item *ngIf="loginForm.controls.email.hasError('required') && loginForm.controls.email.touched"><span class="error-login">Email is required</span></ion-item>
-      <ion-item *ngIf="loginForm.controls.email.hasError('email') && loginForm.controls.email.touched"><span class="error-login">Email is invalid</span></ion-item>
+      <ion-item *ngIf="loginForm.controls.email.hasError('required') && loginForm.controls.email.touched"><span class="error-login">Email
+          is required</span></ion-item>
+      <ion-item *ngIf="loginForm.controls.email.hasError('email') && loginForm.controls.email.touched"><span class="error-login">Email
+          is invalid</span></ion-item>
 
 
       <ion-item>
@@ -25,7 +27,8 @@
         <ion-input formControlName="password" name="password" type="password" required minlength="6">
         </ion-input>
       </ion-item>
-      <ion-item *ngIf="loginForm.controls.password.hasError('required') && loginForm.controls.password.touched"><span class="error-login">Password is required</span></ion-item>
+      <ion-item *ngIf="loginForm.controls.password.hasError('required') && loginForm.controls.password.touched"><span
+          class="error-login">Password is required</span></ion-item>
       <!-- <ion-item *ngIf="loginForm.controls.password.hasError('minlength') && loginForm.controls.password.touched"><span class="error-login">Password is at least 6 chars long</span></ion-item> -->
     </ion-list>
 
@@ -35,4 +38,13 @@
     <p style="text-align: center">Create a <a routerLink="/signup">new account</a></p>
     <p class="login-fail" *ngIf="!login_err_msg">{{ login_err_msg }}</p>
   </form>
+
+  <div text-center>
+    <ion-button round id="facebook_login" color="secondary" (click)="facebookLogin()">
+      <ion-icon name="logo-facebook"></ion-icon>
+      Login with Facebook
+    </ion-button>
+  </div>
+  <!-- <ion-button type="button" expand="full" (click)="facebookLogin()">Login with Facebook</ion-button> -->
+
 </ion-content>
