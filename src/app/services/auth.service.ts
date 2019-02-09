@@ -1,4 +1,5 @@
-import { AlertController } from '@ionic/angular';
+import { environment } from './../../environments/environment.prod';
+import { AlertController, Platform } from '@ionic/angular';
 import { Image } from './image.service';
 import { Injectable } from '@angular/core';
 import { AngularFireAuth } from 'angularfire2/auth';
@@ -11,6 +12,7 @@ import { IonicStorageModule, Storage } from '@ionic/storage';
 import { AngularFireDatabase } from 'angularfire2/database';
 import { AngularFirestore, AngularFirestoreCollection } from 'angularfire2/firestore';
 import { Facebook } from '@ionic-native/facebook/ngx';
+import { GooglePlus } from '@ionic-native/google-plus/ngx';
 
 const USERID_KEY = 'UserId';
 @Injectable({
@@ -29,7 +31,9 @@ export class AuthService {
     private storage: Storage,
     private db: AngularFirestore,
     private alertClt: AlertController,
-    private facebook: Facebook) {
+    private facebook: Facebook,
+    private googlePlus: GooglePlus,
+    private platform: Platform) {
 
     const ID = this.getUserId();
     console.log('Initializing DB... User ID: ', ID);
@@ -199,5 +203,38 @@ export class AuthService {
         this.alertMsg('Login Failed', '', error, ['OK']);
       });
   }
+
+  googleLogin(): Promise<any> {
+
+    return new Promise((resolve, reject) => {
+      this.googlePlus.login({
+        'webClientId': environment.clientID,
+        'offline': true
+      }).then(res => {
+        const googleCredential = firebase.auth.GoogleAuthProvider
+          .credential(res.idToken);
+
+        if (this.platform.is('ios') || this.platform.is('cordova')) {
+          firebase.auth().signInAndRetrieveDataWithCredential(googleCredential)
+            .then(response => {
+              this.authSuccessfully();
+              console.log('Firebase success: ' + JSON.stringify(response));
+              resolve(response);
+            });
+        } else {
+          firebase.auth().signInWithRedirect(googleCredential)
+            .then(response => {
+              console.log('Firebase success: ' + JSON.stringify(response));
+              resolve(response);
+            });
+        }
+
+      }, err => {
+        this.alertMsg('Login Failed', '', err, ['OK']);
+        reject(err);
+      });
+    });
+  }
+
 
 }

@@ -1,3 +1,4 @@
+import { GooglePlus } from '@ionic-native/google-plus/ngx';
 import { Facebook } from '@ionic-native/facebook/ngx';
 import { HomePageModule } from './home/home.module';
 import { EducationPageModule } from './education/education.module';
@@ -55,6 +56,7 @@ firebase.initializeApp(environment.firebase);
     File,
     Camera,
     Facebook,
+    GooglePlus,
     { provide: RouteReuseStrategy, useClass: IonicRouteStrategy }
   ],
   bootstrap: [AppComponent]

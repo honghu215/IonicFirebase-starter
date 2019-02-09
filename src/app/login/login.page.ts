@@ -47,6 +47,9 @@ export class LoginPage implements OnInit {
     this.authService.facebookLogin();
   }
 
+  googleLogin() {
+    this.authService.googleLogin();
+  }
 
 
 }
