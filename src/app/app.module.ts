@@ -25,6 +25,7 @@ import { AngularFirestoreModule } from 'angularfire2/firestore';
 import * as firebase from 'firebase';
 import { LoginPageModule } from './login/login.module';
 import { AngularFireDatabaseModule } from 'angularfire2/database';
+import { AnalysisComponentModule } from './analysis/analysis.module';
 
 firebase.initializeApp(environment.firebase);
 
@@ -46,7 +47,8 @@ firebase.initializeApp(environment.firebase);
     RecordPageModule,
     AngularFireDatabaseModule,
     EducationPageModule,
-    HomePageModule
+    HomePageModule,
+    AnalysisComponentModule
   ],
   providers: [
     StatusBar,

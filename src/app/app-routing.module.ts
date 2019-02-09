@@ -28,7 +28,8 @@ const routes: Routes = [
   { path: 'record-detail/:id', loadChildren: './record/record-detail/record-detail.module#RecordDetailPageModule' },
   { path: 'advisor', loadChildren: './advisor/advisor.module#AdvisorPageModule' },
   { path: 'education', loadChildren: './education/education.module#EducationPageModule' },
-  { path: 'logout', redirectTo: '/home'}
+  { path: 'logout', redirectTo: '/home'},
+  { path: 'analysis', loadChildren: './analysis/analysis.module#AnalysisComponentModule' }
 ];
 
 @NgModule({
