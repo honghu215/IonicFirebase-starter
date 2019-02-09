@@ -8,3 +8,47 @@
     </ion-title>
   </ion-toolbar>
 </ion-header>
+
+<ion-content>
+  
+  <ion-row align-items-end>
+    <ion-col col-2>
+      <button ion-button icon-only outline (click)="transaction.expense = !transaction.expense" color="transaction.expense ? 'danger' : 'primary'">
+        <ion-icon name="remove" *ngIf="transaction.expense"></ion-icon>
+        <ion-icon name="add" *ngIf="!transaction.expense"></ion-icon>
+      </button>
+    </ion-col>
+    <ion-col col-5>
+      <ion-item>
+        <ion-label floating>Value</ion-label>
+        <ion-input type="number" [(ngModel)]="transaction.value"></ion-input>
+      </ion-item>
+
+    </ion-col>
+    <ion-col col-5>
+      <ion-item>
+        <ion-label floating>Month</ion-label>
+        <ion-select [(ngModel)]="transaction.month">
+          <ion-select-option [value]="month.value" *ngFor="let month of months">{{ month.name }}</ion-select-option>
+        </ion-select>
+      </ion-item>
+
+    </ion-col>
+  </ion-row>
+
+  <ion-row>
+    <ion-col>
+      <button ion-button full (click)="addTransaction()">Add Transaction</button>
+    </ion-col>
+  </ion-row>
+
+  <ion-card [hidden]="!chartData">
+    <ion-card-header>
+      Analytics
+    </ion-card-header>
+    <ion-card-content>
+      <canvas #valueBarsCanvas></canvas>
+    </ion-card-content>
+  </ion-card>
+
+</ion-content>

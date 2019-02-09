@@ -7,7 +7,7 @@ import { SignupPageModule } from './signup/signup.module';
 import { File } from '@ionic-native/file/ngx';
 import { PhotographPageModule } from './photograph/photograph.module';
 import { Camera } from '@ionic-native/camera/ngx';
-import { NgModule } from '@angular/core';
+import { ErrorHandler, NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { RouteReuseStrategy } from '@angular/router';
 
