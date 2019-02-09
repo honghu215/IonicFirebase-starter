@@ -79,7 +79,7 @@ export class AuthService {
     this.afAuth.auth
       .createUserWithEmailAndPassword(authData.email, authData.password)
       .then(result => {
-        console.log(result);
+        console.log(`Successfully create new account: ${JSON.stringify(result)}`);
         const user = firebase.auth().currentUser;
         if (user && !user.emailVerified) {
           user.sendEmailVerification().then(() => {
@@ -113,11 +113,11 @@ export class AuthService {
           // };
         } else {
           console.log(result);
-          this.storage.remove(USERID_KEY);
-          this.storage.set(USERID_KEY, result.user.uid);
+          // this.storage.remove(USERID_KEY);
+          // this.storage.set(USERID_KEY, result.user.email);
           console.log(result.user.uid);
           this.userId = result.user.uid;
-          this.saveUserId(result.user.uid);
+          this.saveUserId(result.user.email);
           this.authSuccessfully();
           this.getImages();
           // return {
@@ -181,14 +181,15 @@ export class AuthService {
   public async facebookLogin(): Promise<any> {
     return this.facebook.login(['email'])
       .then(response => {
-        // console.log(`Response from facebook login: ${JSON.stringify(response)}`);
+        console.log(`Response from facebook login: ${JSON.stringify(response)}`);
         const facebookCredential = firebase.auth.FacebookAuthProvider
           .credential(response.authResponse.accessToken);
-        this.saveUserId(response.authResponse.userID);
+        // this.saveUserId(response.authResponse.userID);
 
         firebase.auth().signInAndRetrieveDataWithCredential(facebookCredential)
           .then(success => {
-            // console.log('Firebase success: ' + JSON.stringify(success));
+            console.log('Firebase success: ' + JSON.stringify(success));
+            this.saveUserId(success.user.email);
             this.authSuccessfully();
           })
           .catch(Error => {
