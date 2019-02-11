@@ -13,10 +13,16 @@
     <ion-button expand="full" (click)="capture()">Let's take a picture!</ion-button>
   </div>
 
+  <img [src]="pictureUrl">
   <!-- <ion-list *ngFor="let image of images">
     <ion-item>
       <img [src]="image.url">
     </ion-item>
   </ion-list>   -->
+  <div>{{ visionResult }}</div>
+
+  <ion-card *ngFor="let item of visionItems | async">
+    
+  </ion-card>
 
 </ion-content>

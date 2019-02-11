@@ -1,5 +1,6 @@
+import { GoogleCloudVisionService, VisionItem } from './../services/google-cloud-vision.service';
 import { AngularFirestoreCollection, AngularFirestore } from 'angularfire2/firestore';
-import { AngularFireDatabase } from 'angularfire2/database';
+import { AngularFireDatabase, AngularFireList } from 'angularfire2/database';
 import { AuthService } from './../services/auth.service';
 import { Storage } from '@ionic/storage';
 import { Component, OnInit } from '@angular/core';
@@ -29,12 +30,20 @@ export class PhotographPage implements OnInit {
   imageCollection: AngularFirestoreCollection<string>;
   images: Image[];
 
+  visionResult = '';
+  pictureUrl = '';
+  visionItems: AngularFireList<any>;
+
   constructor(private alertCtl: AlertController,
     private file: File,
     private camera: Camera,
     private loadingController: LoadingController,
     private storage: Storage,
-    private auth: AuthService) { }
+    private auth: AuthService,
+    private vision: GoogleCloudVisionService,
+    private db: AngularFireDatabase) {
+      this.visionItems = db.list('VisionItems');
+    }
 
   ngOnInit() {
     this.gotUrl.next(false);
@@ -49,30 +58,65 @@ export class PhotographPage implements OnInit {
 
   async capture() {
     const cameraOptions: CameraOptions = {
-      quality: 80,
-      destinationType: this.camera.DestinationType.FILE_URI,
-      encodingType: this.camera.EncodingType.JPEG,
+      quality: 100,
+      targetHeight: 500,
+      targetWidth: 500,
+      destinationType: this.camera.DestinationType.DATA_URL,
+      encodingType: this.camera.EncodingType.PNG,
       mediaType: this.camera.MediaType.PICTURE,
       // sourceType: Camera.PictureSourceType.SAVEDPHOTOALBUM,
       saveToPhotoAlbum: true
     };
 
-    try {
-      const imgInfo = await this.camera.getPicture(cameraOptions);
+    this.camera.getPicture(cameraOptions).then( (imageData) => {
+      this.pictureUrl = imageData;
+      console.log(`Picure captured: ${imageData}`);
+      this.vision.getLabels(imageData).subscribe(result => {
+        console.log(result);
+        this.saveResults(imageData, JSON.stringify(result));
+        this.visionResult = JSON.stringify(result);
+        console.log(`Cloud vision response: ${(result)}`);
+      }, err => {
+        console.log(`Cloud Vision error: ${err}`);
+      });
+    }, err => {
+      console.log(`Carema error: ${err}`);
+    });
 
-      const blobInfo = await this.makeFileIntoBlob(imgInfo);
+    // try {
+    //   const imgInfo = await this.camera.getPicture(cameraOptions);
 
-      const uploadInfo: any = await this.upload(blobInfo);
+    //   const blobInfo = await this.makeFileIntoBlob(imgInfo);
 
-      alert('File Upload Success ' + uploadInfo.fileName);
-      console.log(this.imageUrls);
-    } catch (e) {
-      console.log(e.message);
-      alert('File Upload Error ' + e.message);
-    }
+    //   const uploadInfo: any = await this.upload(blobInfo);
+
+    //   alert('File Upload Success ' + uploadInfo.fileName);
+    //   console.log(this.imageUrls);
+    // } catch (e) {
+    //   console.log(e.message);
+    //   alert('File Upload Error ' + e.message);
+    // }
   }
 
+  saveResults(imageData, results) {
+    this.visionItems.push({
+      imageData: imageData,
+      results: results
+    })
+      .then( _ => {})
+      .catch( error => {
+        this.showAlert(error);
+      });
+  }
 
+  async showAlert(message) {
+    const alert = await this.alertCtl.create({
+      header: 'Error',
+      message: message,
+      buttons: ['OK']
+    });
+    alert.present();
+  }
 
 
   async makeFileIntoBlob(imgPath) {
@@ -143,7 +187,7 @@ export class PhotographPage implements OnInit {
             this.imageUrls.push(url);
             // this.auth.latestUrl.next(url);
             loading.dismiss();
-            this.showSuccesfulUploadAlert();
+            // this.showSuccesfulUploadAlert();
           });
         }
       );
@@ -154,16 +198,16 @@ export class PhotographPage implements OnInit {
     this.auth.saveImage(downloadURL);
     console.log('Uploading to firebase database');
   }
-  async showSuccesfulUploadAlert() {
-    const alert = await this.alertCtl.create({
-      header: 'Success',
-      subHeader: '',
-      message: 'This picture is successfully uploaded!',
-      buttons: ['OK']
-    });
-    await alert.present();
-    this.captureDataUrl = '';
-  }
+  // async showSuccesfulUploadAlert() {
+  //   const alert = await this.alertCtl.create({
+  //     header: 'Success',
+  //     subHeader: '',
+  //     message: 'This picture is successfully uploaded!',
+  //     buttons: ['OK']
+  //   });
+  //   await alert.present();
+  //   this.captureDataUrl = '';
+  // }
 
 
 
