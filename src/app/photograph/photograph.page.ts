@@ -9,8 +9,9 @@ import { Subject, Observable } from 'rxjs';
 import * as firebase from 'firebase';
 import { AlertController, LoadingController } from '@ionic/angular';
 import { File } from '@ionic-native/file/ngx';
-import { map } from 'rxjs/operators';
+import { tap, filter } from 'rxjs/operators';
 import { Image } from '../services/image.service';
+import { AngularFireUploadTask, AngularFireStorage } from 'angularfire2/storage';
 
 
 @Component({
@@ -34,13 +35,19 @@ export class PhotographPage implements OnInit {
   pictureUrl = '';
   visionItems: AngularFireList<any>;
 
+  result$: Observable<any>;
+  task: AngularFireUploadTask;
+  image: string;
+
   constructor(private alertCtl: AlertController,
     private file: File,
     private camera: Camera,
     private loadingController: LoadingController,
     private storage: Storage,
+    private afstorage: AngularFireStorage,
     private auth: AuthService,
     private vision: GoogleCloudVisionService,
+    private afs: AngularFirestore,
     private db: AngularFireDatabase) {
       this.visionItems = db.list('VisionItems');
     }
@@ -64,24 +71,26 @@ export class PhotographPage implements OnInit {
       destinationType: this.camera.DestinationType.DATA_URL,
       encodingType: this.camera.EncodingType.PNG,
       mediaType: this.camera.MediaType.PICTURE,
-      // sourceType: Camera.PictureSourceType.SAVEDPHOTOALBUM,
+      sourceType: this.camera.PictureSourceType.SAVEDPHOTOALBUM,
       saveToPhotoAlbum: true
     };
 
-    this.camera.getPicture(cameraOptions).then( (imageData) => {
-      this.pictureUrl = imageData;
-      console.log(`Picure captured: ${imageData}`);
-      this.vision.getLabels(imageData).subscribe(result => {
-        console.log(result);
-        this.saveResults(imageData, JSON.stringify(result));
-        this.visionResult = JSON.stringify(result);
-        console.log(`Cloud vision response: ${(result)}`);
-      }, err => {
-        console.log(`Cloud Vision error: ${err}`);
-      });
-    }, err => {
-      console.log(`Carema error: ${err}`);
-    });
+    const base64 = await this.camera.getPicture(cameraOptions);
+    this.startUpload(base64);
+    // this.camera.getPicture(cameraOptions).then( (imageData) => {
+    //   this.pictureUrl = imageData;
+    //   console.log(`Picure captured: ${imageData}`);
+    //   this.vision.getLabels(imageData).subscribe(result => {
+    //     console.log(result);
+    //     this.saveResults(imageData, JSON.stringify(result));
+    //     this.visionResult = JSON.stringify(result);
+    //     console.log(`Cloud vision response: ${(result)}`);
+    //   }, err => {
+    //     console.log(`Cloud Vision error: ${err}`);
+    //   });
+    // }, err => {
+    //   console.log(`Carema error: ${err}`);
+    // });
 
     // try {
     //   const imgInfo = await this.camera.getPicture(cameraOptions);
@@ -96,6 +105,24 @@ export class PhotographPage implements OnInit {
     //   console.log(e.message);
     //   alert('File Upload Error ' + e.message);
     // }
+  }
+
+  async startUpload(file: string) {
+    const loading = await this.loadingController.create({
+      message: 'Running AI vision analysis...'
+    });
+    await loading.present();
+
+    const docId = this.afs.createId();
+    const path = `${docId}.jpg`;
+    const photoRef = this.afs.collection('photos').doc(docId);
+    this.result$ = photoRef.valueChanges()
+                    .pipe(
+                      filter(data => !!data),
+                      tap(_ => loading.dismiss())
+                    );
+    this.image = 'data:image/jpg;base64,' + file;
+    this.task = this.afstorage.ref(path).putString(this.image, 'data_url');
   }
 
   saveResults(imageData, results) {
