@@ -1,3 +1,4 @@
+import { Observable } from 'rxjs';
 import { environment } from './../../environments/environment';
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
@@ -14,12 +15,14 @@ export class GoogleCloudVisionService {
 
   constructor(private http: HttpClient) { }
 
-  async getLabels(base64Image) {
+  getLabels(imageUrl): Observable<any> {
     const body = {
       'requests': [
         {
           'image': {
-            'content': base64Image
+            'source': {
+              'imageUri': imageUrl
+            }
           },
           'features': [
             {
@@ -30,7 +33,10 @@ export class GoogleCloudVisionService {
       ]
     };
     console.log(`Requesting vision...`);
-    return this.http.post('https://vision.googleapis.com/v1/images:annotate?key=' + environment.googleCloudVisionAPIKey, body,
-                                {headers: new HttpHeaders({'Content-Type': 'application/json'})});
+    const httpOptions = {
+      headers: new HttpHeaders({'Content-Type': 'application/json'}),
+    };
+    return this.http.post<any>('https://vision.googleapis.com/v1/images:annotate?key=' + environment.googleCloudVisionAPIKey, body,
+                        { headers: new HttpHeaders({'Content-Type': 'application/json'}), responseType: 'json' });
   }
 }

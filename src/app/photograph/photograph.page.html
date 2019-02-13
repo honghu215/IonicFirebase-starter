@@ -21,8 +21,16 @@
   </ion-list>   -->
   <div>{{ visionResult }}</div>
 
-  <ion-card *ngFor="let item of visionItems | async">
-    
+  <ion-card *ngFor="let item of items">
+    <img [src]="item.imageUrl" />
+    <ion-card-content>
+      <ion-list>
+        <ion-list-header>
+          Labels
+        </ion-list-header>
+        <ion-item *ngFor="let label of item.results[0].labelAnnotations">{{ label.description }}</ion-item>
+      </ion-list>
+    </ion-card-content>
   </ion-card>
 
 </ion-content>

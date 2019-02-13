@@ -71,7 +71,6 @@ export class AuthService {
         });
       })
     );
-    console.log(JSON.stringify(this.images));
     return this.images;
   }
 

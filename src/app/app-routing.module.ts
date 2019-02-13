@@ -19,7 +19,7 @@ const routes: Routes = [
   { path: 'todos', loadChildren: './todo/todo.module#TodoPageModule' },
   { path: 'todo-details/:id', loadChildren: './todo/todo-details/todo-details.module#TodoDetailsPageModule' },
   { path: 'todo-details', loadChildren: './todo/todo-details/todo-details.module#TodoDetailsPageModule' },
-  { path: 'photograph', canActivate: [AuthGuard], loadChildren: './photograph/photograph.module#PhotographPageModule'},
+  { path: 'photograph', loadChildren: './photograph/photograph.module#PhotographPageModule'},
   { path: 'login', loadChildren: './login/login.module#LoginPageModule' },
   { path: 'signup', loadChildren: './signup/signup.module#SignupPageModule' },
   { path: 'tutorial', loadChildren: './tutorial/tutorial.module#TutorialPageModule' },

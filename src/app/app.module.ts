@@ -1,3 +1,5 @@
+import { HttpClient, HttpHandler, HttpClientModule } from '@angular/common/http';
+import { AngularFireStorage } from 'angularfire2/storage';
 import { Facebook } from '@ionic-native/facebook/ngx';
 import { HomePageModule } from './home/home.module';
 import { EducationPageModule } from './education/education.module';
@@ -47,7 +49,8 @@ firebase.initializeApp(environment.firebase);
     RecordPageModule,
     AngularFireDatabaseModule,
     EducationPageModule,
-    HomePageModule
+    HomePageModule,
+    HttpClientModule
   ],
   providers: [
     StatusBar,
@@ -55,6 +58,7 @@ firebase.initializeApp(environment.firebase);
     File,
     Camera,
     Facebook,
+    AngularFireStorage,
     { provide: RouteReuseStrategy, useClass: IonicRouteStrategy }
   ],
   bootstrap: [AppComponent]
