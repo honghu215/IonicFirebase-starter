@@ -33,7 +33,14 @@
         <ion-list-header>
           Labels
         </ion-list-header>
-        <ion-item *ngFor="let label of imageLabels">{{ label.description }}</ion-item>
+        <ion-row *ngFor="let label of imageLabels">
+          <ion-col width-50>
+            <ion-item>{{ label.description }}</ion-item>
+          </ion-col>
+          <ion-col width-25>Quantity</ion-col>
+          <ion-col width-25>Unit</ion-col>
+        </ion-row>
+        <!-- <ion-item *ngFor="let label of imageLabels">{{ label.description }}</ion-item> -->
       </ion-list>
     </ion-card-content>
   </ion-card>
