@@ -1,27 +1,20 @@
 <ion-header>
-    <ion-toolbar color="primary">
-      <ion-buttons slot="start">
-        <ion-menu-button></ion-menu-button>
-      </ion-buttons>
-      <ion-title>Take A Picture</ion-title>
-    </ion-toolbar>
-  </ion-header>
+  <ion-toolbar color="primary">
+    <ion-buttons slot="start">
+      <ion-menu-button></ion-menu-button>
+    </ion-buttons>
+    <ion-title>Take A Picture</ion-title>
+  </ion-toolbar>
+</ion-header>
 
 <ion-content padding>
 
   <div style="display:flex; flex-direction: column; justify-content: center">
-    <ion-button expand="full" (click)="capture()">Let's take a picture!</ion-button>
+    <ion-button expand="full" (click)="capture(1)">Ttake a picture</ion-button>
+    <ion-button expand="full" (click)="capture(0)">Select a picture</ion-button>
   </div>
 
-  <img [src]="pictureUrl">
-  <!-- <ion-list *ngFor="let image of images">
-    <ion-item>
-      <img [src]="image.url">
-    </ion-item>
-  </ion-list>   -->
-  <div>{{ visionResult }}</div>
-
-  <ion-card *ngFor="let item of items">
+  <!-- <ion-card *ngFor="let item of items">
     <img [src]="item.imageUrl" />
     <ion-card-content>
       <ion-list>
@@ -29,6 +22,18 @@
           Labels
         </ion-list-header>
         <ion-item *ngFor="let label of item.results[0].labelAnnotations">{{ label.description }}</ion-item>
+      </ion-list>
+    </ion-card-content>
+  </ion-card> -->
+
+  <ion-card *ngIf="imageUrl != null" >
+    <img src="{{ imageUrl }}" />
+    <ion-card-content>
+      <ion-list>
+        <ion-list-header>
+          Labels
+        </ion-list-header>
+        <ion-item *ngFor="let label of imageLabels">{{ label.description }}</ion-item>
       </ion-list>
     </ion-card-content>
   </ion-card>

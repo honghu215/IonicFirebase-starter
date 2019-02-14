@@ -12,7 +12,7 @@ import { AngularFireDatabase } from 'angularfire2/database';
 import { AngularFirestore, AngularFirestoreCollection } from 'angularfire2/firestore';
 import { Facebook } from '@ionic-native/facebook/ngx';
 
-const USERID_KEY = 'UserId';
+const USERID_KEY = 'UserEmail';
 @Injectable({
   providedIn: 'root'
 })
@@ -55,14 +55,12 @@ export class AuthService {
       return new Observable<Image[]>();
     }
     const ID = this.getUserId();
-    console.log('Initializing DB... User ID: ', ID);
     this.imageCollections = this.db.collection<Image>(ID);
     this.images = this.imageCollections.snapshotChanges().pipe(
       map(actions => {
         return actions.map(action => {
           const data = action.payload.doc.data();
           const id = action.payload.doc.id;
-          console.log(data.url, data.createdAt);
           return {
             id: id,
             url: data.url,
@@ -82,20 +80,15 @@ export class AuthService {
         const user = firebase.auth().currentUser;
         if (user && !user.emailVerified) {
           user.sendEmailVerification().then(() => {
-            // this.storage.set(USERID_KEY, result.user.uid);
-            // this.authSuccessfully();
             this.alertMsg('Email Verification', '', 'Email Verification link is sent, go to check it in your mailbox', ['OK']);
-            console.log('Email verification sent, please check your mailbox.');
             this.router.navigate(['/login']);
           }, error => {
             this.alertMsg('Sign up failed', '', error, ['OK']);
-            console.log(error);
           });
         }
       })
       .catch(error => {
         this.alertMsg('Sign up failed', '', error, ['OK']);
-        console.log(error);
       });
   }
 
@@ -106,32 +99,15 @@ export class AuthService {
         const user = firebase.auth().currentUser;
         if (!user.emailVerified) {
           this.alertMsg('Login failed', '', 'Email address is not verified, go check your mainbox', ['OK']);
-          // return {
-          //   status: 'error',
-          //   message: 'Email address is not verified. Go check your mailbox'
-          // };
         } else {
-          console.log(result);
-          // this.storage.remove(USERID_KEY);
-          // this.storage.set(USERID_KEY, result.user.email);
-          console.log(result.user.uid);
           this.userId = result.user.uid;
           this.saveUserId(result.user.email);
           this.authSuccessfully();
           this.getImages();
-          // return {
-          //   status: 'success',
-          //   message: ''
-          // };
         }
       })
       .catch(error => {
         this.alertMsg('Login Failed', 'Error', error, ['OK']);
-        console.log(error);
-        // return {
-        //   status: 'error',
-        //   message: error
-        // };
       });
   }
 
@@ -180,14 +156,11 @@ export class AuthService {
   public async facebookLogin(): Promise<any> {
     return this.facebook.login(['email'])
       .then(response => {
-        console.log(`Response from facebook login: ${JSON.stringify(response)}`);
         const facebookCredential = firebase.auth.FacebookAuthProvider
           .credential(response.authResponse.accessToken);
-        // this.saveUserId(response.authResponse.userID);
 
         firebase.auth().signInAndRetrieveDataWithCredential(facebookCredential)
           .then(success => {
-            console.log('Firebase success: ' + JSON.stringify(success));
             this.saveUserId(success.user.email);
             this.authSuccessfully();
           })

@@ -1,11 +1,11 @@
-import { HttpClient, HttpHandler, HttpClientModule } from '@angular/common/http';
+import { HttpClientModule } from '@angular/common/http';
 import { AngularFireStorage } from 'angularfire2/storage';
 import { Facebook } from '@ionic-native/facebook/ngx';
 import { HomePageModule } from './home/home.module';
 import { EducationPageModule } from './education/education.module';
 import { RecordPageModule } from './record/record.module';
 import { IonicStorageModule } from '@ionic/storage';
-import { AngularFireAuth, AngularFireAuthModule } from 'angularfire2/auth';
+import { AngularFireAuthModule } from 'angularfire2/auth';
 import { SignupPageModule } from './signup/signup.module';
 import { File } from '@ionic-native/file/ngx';
 import { PhotographPageModule } from './photograph/photograph.module';
@@ -27,7 +27,8 @@ import { AngularFirestoreModule } from 'angularfire2/firestore';
 
 import * as firebase from 'firebase';
 import { LoginPageModule } from './login/login.module';
-import { AngularFireDatabaseModule, AngularFireObject } from 'angularfire2/database';
+import { AngularFireDatabaseModule } from 'angularfire2/database';
+import { WebView } from '@ionic-native/ionic-webview/ngx';
 
 firebase.initializeApp(environment.firebase);
 
@@ -58,7 +59,7 @@ firebase.initializeApp(environment.firebase);
     File,
     Camera,
     Facebook,
-    AngularFireStorage,
+    WebView,
     { provide: RouteReuseStrategy, useClass: IonicRouteStrategy }
   ],
   bootstrap: [AppComponent]

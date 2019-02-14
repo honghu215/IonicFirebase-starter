@@ -1,20 +1,14 @@
-import { GoogleCloudVisionService, VisionItem } from './../services/google-cloud-vision.service';
-import { AngularFirestoreCollection, AngularFirestore } from 'angularfire2/firestore';
+import { GoogleCloudVisionService } from './../services/google-cloud-vision.service';
 import { AngularFireDatabase, AngularFireList } from 'angularfire2/database';
 import { AuthService } from './../services/auth.service';
-import { Storage } from '@ionic/storage';
 import { Component, OnInit } from '@angular/core';
 import { Camera, CameraOptions } from '@ionic-native/camera/ngx';
-import { Subject, Observable } from 'rxjs';
+import { Subject } from 'rxjs';
 import * as firebase from 'firebase';
 import { AlertController, LoadingController } from '@ionic/angular';
 import { File } from '@ionic-native/file/ngx';
-import { tap, filter } from 'rxjs/operators';
-import { Image } from '../services/image.service';
-import { AngularFireUploadTask, AngularFireStorage } from 'angularfire2/storage';
+import { WebView } from '@ionic-native/ionic-webview/ngx';
 
-// tslint:disable-next-line:max-line-length
-const imgUrl = 'https://firebasestorage.googleapis.com/v0/b/njhack-8798c.appspot.com/o/huhong215%40gmail.com%2F2019-2-2-20%3A49%3A7cdv_photo_012.jpg?alt=media&token=d4d38f27-5f2d-4416-be08-ee1f8a51f5d3';
 @Component({
   selector: 'app-photograph',
   templateUrl: './photograph.page.html',
@@ -22,36 +16,25 @@ const imgUrl = 'https://firebasestorage.googleapis.com/v0/b/njhack-8798c.appspot
 })
 export class PhotographPage implements OnInit {
   gotUrl = new Subject<Boolean>();
-  errorMsg = '';
-  captureDataUrl = '';
-  imageUrls = [];
-  storageRef: any;
-  downloadUrl = '';
   isLoggedin = false;
-
-  imageCollection: AngularFirestoreCollection<string>;
-  images: Image[];
-
-  visionResult = '';
-  pictureUrl = '';
-  visionItems: AngularFireList<any>;
-  items = [];
-  result$: Observable<any>;
-  task: AngularFireUploadTask;
-  image: string;
   userId: string;
 
+  dbItems: AngularFireList<any>;
+  items = [];
+  imageLabels = [];
+  imageUrl = null;
+
   constructor(private alertCtl: AlertController,
-    private file: File,
-    private camera: Camera,
-    private loadingController: LoadingController,
-    private auth: AuthService,
-    private vision: GoogleCloudVisionService,
-    private afs: AngularFirestore,
-    private db: AngularFireDatabase) {
+              private file: File,
+              private camera: Camera,
+              private loadingController: LoadingController,
+              private auth: AuthService,
+              private vision: GoogleCloudVisionService,
+              private db: AngularFireDatabase,
+              private webView: WebView) {
     this.userId = this.auth.getUserId();
-    this.visionItems = db.list(this.userId.split('@')[0]);
-    this.visionItems.valueChanges().subscribe(items => {
+    this.dbItems = db.list(this.userId.split('@')[0]);
+    this.dbItems.valueChanges().subscribe(items => {
       this.items = items;
     });
   }
@@ -61,29 +44,27 @@ export class PhotographPage implements OnInit {
     this.auth.authChange.subscribe(logStatus => {
       this.isLoggedin = logStatus;
     });
-    this.auth.getImages().subscribe(data => {
-      this.images = data;
-    });
   }
 
-  async capture() {
+  async capture(sourceType: number) {
     const cameraOptions: CameraOptions = {
       quality: 100,
       destinationType: this.camera.DestinationType.FILE_URI,
       encodingType: this.camera.EncodingType.JPEG,
       mediaType: this.camera.MediaType.PICTURE,
-      // sourceType: this.camera.PictureSourceType.SAVEDPHOTOALBUM,
+      sourceType: sourceType,
       saveToPhotoAlbum: true
     };
 
     try {
       const imgInfo = await this.camera.getPicture(cameraOptions);
+      this.imageUrl = this.webView.convertFileSrc(imgInfo);
       const blobInfo = await this.makeFileIntoBlob(imgInfo);
-      const uploadInfo: any = await this.upload(blobInfo);
-      // alert('File Upload Success ' + uploadInfo.fileName);
+      await this.upload(blobInfo);
     } catch (e) {
-      console.log(e.message);
-      this.showAlert('Error', e.message);
+      if (e.message != null) {
+        this.showAlert('Error', e.message);
+      }
     }
   }
 
@@ -104,7 +85,6 @@ export class PhotographPage implements OnInit {
           const imgBlob = new Blob([buffer], {
             type: 'image/jpeg'
           });
-          console.log(imgBlob.type, imgBlob.size);
           resolve({
             fileName,
             imgBlob
@@ -134,17 +114,13 @@ export class PhotographPage implements OnInit {
         },
         _error => {
           loading.dismiss();
-          console.log(_error);
           reject(_error);
         },
         () => {
           uploadTask.snapshot.ref.getDownloadURL().then((downloadURL) => {
             loading.dismiss();
-            const url = downloadURL;
-            this.visionAnalyze(url);
-            // this.saveImageToDatabase(url);
-            // this.imageUrls.push(url);
-            // loading.dismiss();
+            // this.imageUrl = downloadURL;
+            this.visionAnalyze(downloadURL);
           });
         }
       );
@@ -157,8 +133,7 @@ export class PhotographPage implements OnInit {
     });
     await analyzing.present();
     this.vision.getLabels(imageUrl).subscribe(result => {
-      const items = (result.responses);
-      console.log(`Google Vision result: ${JSON.stringify(items)}`);
+      this.imageLabels = (result.responses[0].labelAnnotations);
       this.saveResults(imageUrl, result.responses);
       analyzing.dismiss();
     }, error => {
@@ -167,14 +142,7 @@ export class PhotographPage implements OnInit {
   }
 
   async saveResults(imageUrl: string, results) {
-    // push to local array
-    // this.items.push({
-    //   imageUrl: imageUrl,
-    //   results: results
-    // });
-
-    // add to cloud database
-    this.visionItems.push({
+    this.dbItems.push({
       imageUrl: imageUrl,
       results: results
     })
