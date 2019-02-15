@@ -1,3 +1,5 @@
+import { ItemModalPage } from './item-modal/item-modal.page';
+import { PhotographService, MealItem } from './../services/photograph.service';
 import { GoogleCloudVisionService } from './../services/google-cloud-vision.service';
 import { AngularFireDatabase, AngularFireList } from 'angularfire2/database';
 import { AuthService } from './../services/auth.service';
@@ -5,10 +7,11 @@ import { Component, OnInit } from '@angular/core';
 import { Camera, CameraOptions } from '@ionic-native/camera/ngx';
 import { Subject } from 'rxjs';
 import * as firebase from 'firebase';
-import { AlertController, LoadingController } from '@ionic/angular';
+import { AlertController, LoadingController, ModalController, NavController } from '@ionic/angular';
 import { File } from '@ionic-native/file/ngx';
 import { WebView } from '@ionic-native/ionic-webview/ngx';
 
+const allLabels = ['orange', 'banana', 'cabage'];
 @Component({
   selector: 'app-photograph',
   templateUrl: './photograph.page.html',
@@ -24,19 +27,27 @@ export class PhotographPage implements OnInit {
   imageLabels = [];
   imageUrl = null;
 
+  nutritionItems: any;
+  mealItem: MealItem;
+  queryString: string;
+  itemName: string;
+
   constructor(private alertCtl: AlertController,
+              private modalCtrl: ModalController,
+              private nav: NavController,
               private file: File,
               private camera: Camera,
               private loadingController: LoadingController,
               private auth: AuthService,
               private vision: GoogleCloudVisionService,
               private db: AngularFireDatabase,
+              private photoService: PhotographService,
               private webView: WebView) {
-    this.userId = this.auth.getUserId();
-    this.dbItems = db.list(this.userId.split('@')[0]);
-    this.dbItems.valueChanges().subscribe(items => {
-      this.items = items;
-    });
+              this.userId = this.auth.getUserId();
+              this.dbItems = db.list(this.userId.split('@')[0]);
+              this.dbItems.valueChanges().subscribe(items => {
+                this.items = items;
+              });
   }
 
   ngOnInit() {
@@ -127,15 +138,15 @@ export class PhotographPage implements OnInit {
     });
   }
 
-  async visionAnalyze(imageUrl) {
+  async visionAnalyze(imgUrl) {
     const analyzing = await this.loadingController.create({
       message: 'Analyzing...'
     });
     await analyzing.present();
-    this.vision.getLabels(imageUrl).subscribe(result => {
+    this.vision.getLabels(imgUrl).subscribe(result => {
       this.imageLabels = (result.responses[0].labelAnnotations);
-      this.saveResults(imageUrl, result.responses);
       analyzing.dismiss();
+      this.saveResults(imgUrl, result.responses);
     }, error => {
       console.log(error);
     });
@@ -150,6 +161,13 @@ export class PhotographPage implements OnInit {
       .catch(error => {
         this.showAlert('Error', error);
       });
+    this.imageLabels.forEach(label => {
+      console.log(label);
+      if (allLabels.includes(label.description.toLowerCase())) {
+        this.itemName = label.description;
+        console.log(this.itemName);
+      }
+    });
   }
 
   async saveImageToDatabase(downloadURL: string) {
@@ -163,5 +181,38 @@ export class PhotographPage implements OnInit {
       buttons: ['OK']
     });
     alert.present();
+  }
+
+  async getNutrition() {
+    this.photoService.calculateNutrition(this.queryString).subscribe(res => {
+      this.nutritionItems = res.foods;
+    }, error => {
+      this.showAlert('Nutritionix Error', error.message);
+    });
+  }
+
+  close() {
+    this.imageUrl = '';
+    this.itemName = '';
+    this.imageLabels = [];
+    this.showAlert('Sorry', 'Please retake/select a photo');
+  }
+
+  async openModal() {
+    const modal = await this.modalCtrl.create({
+      component: ItemModalPage,
+      componentProps: {
+        itemName: this.itemName
+      },
+      cssClass: 'modalCss'
+    });
+    modal.present();
+
+    modal.onDidDismiss().then(res => {
+      console.log(`Received data from modal: ${ res.data.data }`);
+      this.queryString = res.data;
+      this.itemName = '';
+      this.imageLabels = [];
+    });
   }
 }
