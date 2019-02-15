@@ -1,3 +1,4 @@
+import { WheelSelector } from '@ionic-native/wheel-selector/ngx';
 import { HttpClientModule } from '@angular/common/http';
 import { AngularFireStorage } from 'angularfire2/storage';
 import { Facebook } from '@ionic-native/facebook/ngx';
@@ -60,6 +61,7 @@ firebase.initializeApp(environment.firebase);
     Camera,
     Facebook,
     WebView,
+    WheelSelector,
     { provide: RouteReuseStrategy, useClass: IonicRouteStrategy }
   ],
   bootstrap: [AppComponent]
