@@ -27,7 +27,6 @@ export class PhotographPage implements OnInit {
   imageLabels = [];
   imageUrl = null;
 
-  nutritionItems: any;
   mealItem: MealItem;
   queryString: string;
   itemName: string;
@@ -59,7 +58,6 @@ export class PhotographPage implements OnInit {
     this.auth.authChange.subscribe(logStatus => {
       this.isLoggedin = logStatus;
     });
-    console.log(4 + ' ' + 'apples');
   }
 
   async capture(sourceType: number) {
@@ -131,7 +129,6 @@ export class PhotographPage implements OnInit {
     await loading.present();
 
     return new Promise((resolve, reject) => {
-      // const userId = this.auth.getUserId();
       const currDateTime = new Date();
       const fileName = currDateTime.getFullYear() + '-' + (currDateTime.getMonth() + 1) + '-' + currDateTime.getDay()
         + '-' + currDateTime.getHours() + ':' + currDateTime.getMinutes() + ':' + currDateTime.getSeconds();
@@ -149,7 +146,6 @@ export class PhotographPage implements OnInit {
         () => {
           uploadTask.snapshot.ref.getDownloadURL().then((downloadURL) => {
             loading.dismiss();
-            // this.imageUrl = downloadURL;
             this.visionAnalyze(downloadURL);
           });
         }
@@ -167,7 +163,7 @@ export class PhotographPage implements OnInit {
       analyzing.dismiss();
       this.saveResults(imgUrl, result.responses);
     }, error => {
-      console.log(error);
+      this.showAlert('Error', error);
     });
   }
 
@@ -180,11 +176,13 @@ export class PhotographPage implements OnInit {
       .catch(error => {
         this.showAlert('Error', error);
       });
+    // this.getItemName();
+  }
+
+  getItemName() {
     this.imageLabels.forEach(label => {
-      console.log(label);
       if (allLabels.includes(label.description.toLowerCase())) {
         this.itemName = label.description;
-        console.log(this.itemName);
       }
     });
   }
@@ -202,17 +200,18 @@ export class PhotographPage implements OnInit {
     alert.present();
   }
 
-  async getNutrition() {
-    // tslint:disable-next-line:max-line-length
-    this.imageUrl = 'https://firebasestorage.googleapis.com/v0/b/njhack-8798c.appspot.com/o/huhong215%40gmail.com%2F2019-2-4-23%3A37%3A51cdv_photo_017.jpg?alt=media&token=31b245f8-a5ed-4440-a037-7dff146f9f4d';
-    this.visionAnalyze(this.imageUrl);
+  getNutrition(queryString: string) {
+    this.photoService.calculateNutrition(queryString).subscribe(response => {
+      this.nutritionResult = response.foods[0];
+    }, error => {
+      this.showAlert('Not Found', error.error.message);
+      this.init();
+    });
   }
 
   close() {
-    this.imageUrl = '';
-    this.itemName = '';
-    this.imageLabels = [];
-    this.showAlert('Sorry', 'Please retake/select a photo');
+    this.init();
+    this.showAlert('Error', 'Please retake/select a photo');
   }
 
   async openModal() {
@@ -227,18 +226,8 @@ export class PhotographPage implements OnInit {
 
     modal.onDidDismiss().then(res => {
       if (res.data == null) { return; }
-      console.log(`Received data from modal: ${res.data.data}`);
       this.itemString = res.data.data;
-      console.log(this.itemString);
-      this.photoService.calculateNutrition(res.data.data).subscribe(response => {
-        if (response.foods != null) {
-          this.nutritionResult = response.foods[0];
-        } else {
-          this.showAlert('Error', response.message);
-          this.init();
-        }
-
-      });
+      this.getNutrition(res.data.data);
     });
   }
 

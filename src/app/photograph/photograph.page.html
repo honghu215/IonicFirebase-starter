@@ -15,37 +15,24 @@
     <ion-button expand="full" (click)="getNutrition()">Select from browser</ion-button>
   </div>
 
-  <div *ngIf="nutritionItems != null">
-    <ion-card *ngFor="let nutritionItem of nutritionItems">
-      <ion-card-content>
-        <ion-list>
-          <ion-list-header>{{ nutritionItem.food_name }}</ion-list-header>
-          <ion-row>
-            <ion-col size="6">
-              <ion-item>Sodium</ion-item>
-            </ion-col>
-            <ion-col size="3">
-              <ion-item>{{ nutritionItem.nf_sodium }}</ion-item>
-            </ion-col>
-
-          </ion-row>
-          <ion-item>{{ nutritionItem.nf_cholesterol }}</ion-item>
-          <ion-item>{{ nutritionItem.nf_suggars }}</ion-item>
-          <ion-item>{{ nutritionItem.nf_potassium }}</ion-item>
-        </ion-list>
-      </ion-card-content>
-    </ion-card>
-  </div>
-
-
-
   <ion-card *ngIf="imageLabels.length > 0">
-    <img src="{{ imageUrl }}" />
+    <img src="{{ imageUrl }}" height="360 px" width="120 px" />
     <ion-card-header *ngIf="itemString != ''">
       <ion-card-title>{{ itemString }}</ion-card-title>
     </ion-card-header>
+
     <ion-card-content *ngIf="itemString === ''">
-      <h2 style="text-align:center">{{ itemName }} ?</h2>
+      <!-- <h2 style="text-align:center">{{ itemName }} ?</h2> -->
+      <!-- select label from vision results -->
+      <ion-item>
+        <ion-label>Label</ion-label>
+        <ion-select [(ngModel)]="itemName" placeholder="Select One" required>
+          <ion-select-option *ngFor="let label of imageLabels" value="{{ label.description }}">
+            {{ label.description }}
+          </ion-select-option>
+        </ion-select>
+      </ion-item>
+
       <ion-row no-padding>
         <ion-col size="6">
           <ion-button expand="full" color="danger" (click)="close()">
@@ -60,7 +47,7 @@
       </ion-row>
     </ion-card-content>
 
-    <ion-card-content *ngIf="itemString != ''">
+    <ion-card-content *ngIf="nutritionResult != null">
       <ion-list>
         <ion-row>
           <ion-col size="6">Saturated Fat</ion-col>

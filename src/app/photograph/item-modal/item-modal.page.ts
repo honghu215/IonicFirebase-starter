@@ -1,3 +1,4 @@
+import { PhotographService } from './../../services/photograph.service';
 import { WheelSelector } from '@ionic-native/wheel-selector/ngx';
 import { ModalController } from '@ionic/angular';
 import { Component, OnInit, Input } from '@angular/core';
@@ -32,7 +33,6 @@ export class ItemModalPage implements OnInit {
               private selector: WheelSelector) { }
 
   ngOnInit() {
-    console.log(`Modal passed data: ${ this.itemName }`);
   }
 
   async openSelector() {
@@ -41,13 +41,9 @@ export class ItemModalPage implements OnInit {
       items: [ selectorData.numbers ],
     }).then( res => {
       this.quantity = res[0].description;
-      console.log(this.quantity, res[0].description);
     }, err => { console.log(err); });
   }
 
-  confirm() {
-    console.log('Query nutritionix');
-  }
   close() {
     this.modalCtrl.dismiss();
   }
